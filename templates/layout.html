@@ -1,0 +1,16 @@
+{% extends "_base.html" %} {% load static %} 
+{% block content %}
+<div class="flex flex-col h-screen">
+    {% include "partials/navbar.html" %}
+    <div class="flex h-full">
+        {% include "partials/sidebar.html" %}
+        <div class="flex pb-2 flex-1">
+            <div class="w-full h-full bg-white overflow-y-auto rounded-l-2xl p-6">
+                {% block main %}
+                {% endblock main %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

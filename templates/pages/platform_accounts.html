@@ -1,0 +1,207 @@
+{% extends 'layout.html' %}
+{% block main %}
+<div class="flex items-center flex-col justify-center">
+    <!-- <h1 class="text-2xl font-semibold">Chào mừng bạn đến với Sharer</h1> -->
+    <!-- <div class="max-w-screen-md w-full mt-6">
+        <div class="relative w-full">
+            <span class="absolute top-0 left-1 p-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-search"><path
+                        stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+                        d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path
+                        d="M21 21l-6 -6" /></svg>
+            </span>
+            <input type="text" placeholder="Tìm kiếm" class="rounded-full text-md p-3 pl-12 w-full border border-transparent bg-blue-50/70 outline-none focus:bg-white focus:shadow-md focus:border-zinc-300" />
+        </div>
+    </div> -->
+</div>
+<div x-data="modal()">
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
+        {% for platform_account in platform_accounts %}
+            {% if platform_account.platform.name == 'Semrush' %}
+            <a href="{% url 'reverse_proxy_semrush' %}" target='_blank' class="w-full bg-blue-50/70 hover:bg-blue-50 rounded-xl p-4 flex relative group cursor-pointer gap-2">
+                <div
+                    class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
+                    <img class="w-full h-full object-cover" src="{{platform_account.platform.logo_url}}"alt >
+                </div>
+                <div class="space-y-1">
+                    <p class="text-lg font-semibold block">{{ platform_account.platform.name }}</p>
+                    <p class="text-sm text-zinc-500 line-clamp-1">{{ platform_account.platform.description }}</p>
+                    <div 
+                        class="text-sm flex items-center gap-1"
+                        :class=" '{{platform_account.time_left.string}}'=='Vĩnh viễn' ? 'text-green-600' : '{{platform_account.time_left.string}}'=='Hết hạn' ? 'text-red-500' : 'text-blue-500'">
+                        <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-clock"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
+                        <span>{{platform_account.time_left.string}}</span>
+                    </div>
+                </div>
+            </a>
+            {% else %}
+            <div
+                class="w-full bg-blue-50/70 hover:bg-blue-50 rounded-xl flex relative group cursor-pointer gap-2 p-2"
+                @click="openModal('{{platform_account.id}}')"
+                >
+                <div class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
+                    <img class="w-full h-full object-cover" src="{{platform_account.platform.logo_url}}"alt >
+                </div>
+                <div class="py-2 space-y-1">
+                    <p class="text-lg font-semibold block">{{ platform_account.platform.name }}</p>
+                    <p class="text-sm text-zinc-500 line-clamp-1">{{ platform_account.platform.description }}</p>
+                    <div 
+                        class="text-sm flex items-center gap-1"
+                        :class=" '{{platform_account.time_left.string}}'=='Vĩnh viễn' ? 'text-green-600' : '{{platform_account.time_left.string}}'=='Hết hạn' ? 'text-red-500' : 'text-blue-500'">
+                        <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-clock"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
+                        <span>{{platform_account.time_left.string}}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <!-- Modal -->
+    <div 
+        x-show="isOpen" 
+        class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50"
+        style="display: none;"
+        >
+        <div class="absolute inset-0 z-0" @click="closeModal"></div>
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative z-10">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold" x-text="'Chi tiết '+data.platform.name"></h3>
+            </div>
+            <div class="space-y-4">
+                <div class="relative flex gap-4 items-center">
+                    <div class="overflow-hidden rounded-full w-20 h-20 min-w-20 bg-white border border-zinc-300">
+                        <img :src="data.platform.logo_url" alt="Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div class="">
+                        <p class="font-semibold text-zinc-800 text-lg" x-text="data.platform.name"></p>
+                        <p class="text-sm text-zinc-600 line-clamp-1" x-text="data.platform.description"></p>
+                        <div 
+                            class="text-sm flex items-center gap-1 mt-1"
+                            :class=" data.time_left.string=='Vĩnh viễn' ? 'text-green-600' : data.time_left.string=='Hết hạn' ? 'text-red-500' : 'text-blue-500'">
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-clock"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" /><path d="M12 7v5l3 3" /></svg>
+                            <span x-text="data.time_left.string"></span>
+                        </div>
+                    </div>
+                </div>
+                <div >
+                    <div class="mb-2">
+                        <label for="url" class="block text-sm font-medium mb-1 text-gray-900 dark:text-white">Link website</label>
+                        <div class="relative group" x-data="onCopy()">
+                            <input disabled :value='data.platform.url' type="text" id="url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <button class="opacity-0 group-hover:opacity-100 absolute p-1.5 top-1/2 right-2 transform -translate-y-1/2 text-blue-500 rounded-md hover:bg-blue-50 focus:outline-none " @click="copyToClipboard(data.url);on()">
+                                <svg x-show="!copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-copy"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" /><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" /></svg>
+                                <svg x-show="copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-2" x-data="onCopy()">
+                        <label for="username" class="block text-sm font-medium mb-1 text-gray-900 dark:text-white">Tài khoản</label>
+                        <div class="relative group">
+                            <input disabled :value='data.username' type="text" id="username" class=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <button class="opacity-0 group-hover:opacity-100 absolute p-1.5 top-1/2 right-2 transform -translate-y-1/2 text-blue-500 rounded-md hover:bg-blue-50 focus:outline-none " @click="copyToClipboard(data.username);on()">
+                                <svg x-show="!copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-copy"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" /><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" /></svg>
+                                <svg x-show="copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-2" x-data="onCopy()">
+                        <label for="password" class="block text-sm font-medium mb-1 text-gray-900 dark:text-white">Mật khẩu</label>
+                        <div class="relative group" x-data="{ showPassword: false }">
+                            <input disabled autocomplete="off" :value='data.password' :type="showPassword?'text':'password'" id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <button class="opacity-0 group-hover:opacity-100 absolute p-1.5 top-1/2 right-2 transform -translate-y-1/2 text-blue-500 rounded-md hover:bg-blue-50 focus:outline-none " @click="copyToClipboard(data.password);on()">
+                                <svg x-show="!copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-copy"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" /><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" /></svg>
+                                <svg x-show="copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                            </button>
+                            <button @click="showPassword=!showPassword" class="opacity-0 group-hover:opacity-100  absolute p-1.5 top-1/2 right-10 transform -translate-y-1/2 text-blue-500 rounded-md hover:bg-blue-50 focus:outline-none " @click="copyToClipboard(data.password);on()">
+                                <svg x-show="!showPassword" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                <svg x-show=showPassword xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye-closed"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M21 9c-2.4 2.667 -5.4 4 -9 4c-3.6 0 -6.6 -1.333 -9 -4" /><path d="M3 15l2.5 -3.8" /><path d="M21 14.976l-2.492 -3.776" /><path d="M9 17l.5 -4" /><path d="M15 17l-.5 -4" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-2" x-data="onCopy()">
+                        <label for="cookie" class="block text-sm font-medium mb-1 text-gray-900 dark:text-white">Cookie</label>
+                        <div class="relative group">
+                            <textarea disabled rows="5" :value='data.cookie' id="cookie" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></textarea>
+                            <button class="opacity-0 group-hover:opacity-100 absolute p-1.5 top-2 right-2 transform  text-blue-500 rounded-md hover:bg-blue-50 focus:outline-none " @click="copyToClipboard(data.cookie);on()">
+                                <svg x-show="!copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-copy"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z" /><path d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1" /></svg>
+                                <svg x-show="copy" xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="mt-6 text-right">
+                <button @click="closeModal" class="px-4 py-2 text-blue-600 duration-150 hover:bg-blue-50 rounded-full">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alpine.js Component -->
+<script>
+    function modal() {
+        return {
+            isOpen: false,
+            data: {
+                username: '',
+                password: '',
+                cookie: '',
+                platform : {
+                    name: '',
+                    description: '',
+                    logo_url: '',
+                    url: '',
+                },
+                time_left: {
+                    days: '',
+                    hours: '',
+                    minutes: '',
+                    string: '',
+                },
+            },
+            async fetchData(platformId) {
+                try {
+                    const response = await fetch(`/platform_account_detail/${platformId}/`);
+                    console.log(response);
+                    this.data = await response.json();
+                } catch (error) {
+                    console.error(error);
+                }
+            },
+            openModal( platformId ) {
+                this.fetchData(platformId);
+                this.isOpen = true;
+            },
+            closeModal() {
+                this.isOpen = false;
+            }
+        };
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            console.log("Text copied to clipboard:", text);
+        }).catch(err => {
+            console.error("Failed to copy text: ", err);
+        });
+    }
+    function onCopy(){
+        return {
+            copy:false,
+            on: function(e){
+                this.copy = true;
+                setTimeout(() => {
+                    this.copy = false;
+                }, 1000);
+            }
+        }
+    }
+</script>
+{% endblock %}
