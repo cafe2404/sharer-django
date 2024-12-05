@@ -208,13 +208,19 @@ UNFOLD = {
                     },
                     {
                         'title': _('Quản lý nền tảng'),
-                        'icon': 'people',
+                        'icon': 'language',
                         'link': reverse_lazy('admin:platform_share_platform_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
-                               {
+                    {
+                        'title': _('Quản lý nhóm tài khoản'),
+                        'icon': 'groups',
+                        'link': reverse_lazy('admin:platform_share_accountgroup_changelist'),
+                        'permission': lambda request: request.user.is_superuser,
+                    },
+                    {
                         'title': _('Quản lý tài khoản chia sẻ'),
-                        'icon': 'people',
+                        'icon': 'folder_shared',
                         'link': reverse_lazy('admin:platform_share_platformaccount_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },

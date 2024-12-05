@@ -22,7 +22,7 @@
     <div class="mt-16 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
         {% for platform_account in platform_accounts %}
             {% if platform_account.platform.name == 'Semrush' %}
-            <a href="{% url 'reverse_proxy_semrush' %}" target='_blank' class="w-full bg-blue-50/70 hover:bg-blue-50 rounded-xl p-4 flex relative group cursor-pointer gap-2">
+            <a href="{% url 'reverse_proxy_semrush' %}" target='_blank' class="w-full bg-blue-50/70 hover:bg-blue-50 rounded-xl p-2 flex relative group cursor-pointer gap-2">
                 <div
                     class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
                     <img class="w-full h-full object-cover" src="{{platform_account.platform.logo_url}}"alt >

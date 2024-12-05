@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions
 from .models import Platform, PlatformAccount
 from .serializers import PlatformSerializer, PlatformAccountSerializer
+from django.db import models
 
 class PlatformViewSet(viewsets.ModelViewSet):
     queryset = Platform.objects.all()
@@ -11,5 +12,9 @@ class PlatformAccountViewSet(viewsets.ModelViewSet):
     serializer_class = PlatformAccountSerializer
     permission_classes = [permissions.IsAuthenticated]
     def get_queryset(self):
-        # Only return platform accounts owned by the current user
-        return PlatformAccount.objects.filter(user=self.request.user)
+        user = self.request.user
+        # Tài khoản mà user có quyền truy cập (trực tiếp hoặc qua nhóm)
+        return PlatformAccount.objects.filter(
+            models.Q(users=user) | 
+            models.Q(groups__users=user)
+        ).distinct()

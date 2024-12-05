@@ -6,13 +6,16 @@ from .models import PlatformAccount
 import requests
 from django.http import HttpResponse,JsonResponse
 from .custom_platform import CustomPlatform
-
+from django.db import models
 
 
 # Create your views here.
 @login_required
 def platform_accounts(request):
-    platform_accounts = PlatformAccount.objects.filter(user = request.user).all()
+    platform_accounts = PlatformAccount.objects.filter(
+                            models.Q(users=request.user) | 
+                            models.Q(groups__users=request.user)
+                        ).distinct()
     return render(request, 'pages/platform_accounts.html', {'platform_accounts': list(platform_accounts)})
 
 @login_required
