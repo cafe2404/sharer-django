@@ -1,56 +1,15 @@
 {% load static %}
 <nav>
-  <div class="w-full flex justify-center py-4 px-6">
-    <a href="/platform_accounts/" class="text-2xl items-center gap-1 flex">
+  <div class="w-full flex justify-between items-center py-4 px-6 bg-white border-b">
+    <a href="/" class="text-2xl items-center gap-1 flex">
      <img src="{% static 'images/logo-full.svg' %}" alt="Logo" class="h-8" />
     </a>
     <div class="flex items-center space-x-2 justify-end">
-      {% comment %} <a
-        href="/"
-        class="text-zinc-700 hover:bg-zinc-200 rounded-full w-10 h-10 flex items-center justify-center"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-help"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-          <path d="M12 17l0 .01" />
-          <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
-        </svg>
-      </a> {% endcomment %}
-      {% comment %} <a
-        href="/settings/"
-        class="text-zinc-700 hover:bg-zinc-200 rounded-full w-10 h-10 flex items-center justify-center"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-settings"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"
-          />
-          <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-        </svg>
-      </a> {% endcomment %}
-      {% comment %} {% if request.user.is_authenticated and request.user.avatar %}
+      <a href="#" class="flex items-center gap-2 border border-zinc-300 text-zinc-900 bg-white hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-full text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-cloud-download"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4"></path><path d="M12 13l0 9"></path><path d="M9 19l3 3l3 -3"></path></svg>
+          Tải xuống extension
+      </a>
+       {% if request.user.is_authenticated and request.user.avatar %}
       <img
         class="w-10 h-10 rounded-full"
         src="{{ request.user.avatar.url }}"
@@ -62,7 +21,7 @@
         src="/static/default-avatar.jpg"
         alt="Default Avatar"
       />
-      {% endif %} {% endcomment %}
+      {% endif %}
     </div>
   </div>
 </nav>

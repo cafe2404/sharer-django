@@ -1,8 +1,7 @@
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 
-def default_view(request):
-    if request.user.is_authenticated:
-        return redirect('platform_accounts')  # Tên của view hoặc tên URL pattern bạn muốn chuyển hướng
-    else:
-        return redirect('login')  # Tên URL pattern của trang đăng nhập
+def handler404(request, exception):
+    """
+    Custom 404 error handler that renders the 404.html template
+    """
+    return render(request, '404.html', status=404)

@@ -1,0 +1,57 @@
+{% extends 'layout.html' %}
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block main %}
+<div class="flex items-center flex-col justify-center">
+    <h1 class="text-2xl font-semibold">Chào mừng bạn đến với Sharer</h1>
+   <div class="max-w-screen-md w-full mt-6">
+        <div class="relative w-full">
+            <span class="absolute top-0 left-1 p-3 text-zinc-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-search"><path
+                    stroke="none" d="M0 0h24v24H0z" fill="none" /><path
+                    d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path
+                    d="M21 21l-6 -6" /></svg>
+            </span>
+            <input type="text" placeholder="Tìm kiếm" class="rounded-full text-md p-3 pl-12 w-full bg-white outline-none border border-zinc-300 focus:border-zinc-500" />
+        </div>
+    </div>
+</div>
+    <div class="mt-8">
+        <h4 class="text-md font-semibold text-zinc-800">{{package.subscription_plan.name}}</h4>
+        <div class="mt-2 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            {% for platform_account in package.accounts %}
+                <div class="w-full bg-white border border-zinc-300 rounded-xl flex relative group cursor-pointer gap-2 p-2" >
+                    <div class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
+                        <img class="w-full h-full object-cover" src="{{platform_account.platform.logo_url}}"alt >
+                    </div>
+                    <div class="py-2">
+                        <p class="text-lg font-semibold block">{{ platform_account.platform.name }}</p>
+                        <p class="text-sm text-zinc-500 line-clamp-2">{{ platform_account.platform.description | safe}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="mt-6">
+        <h4 class="text-md font-semibold text-zinc-800">Tài khoản lẻ</h4>
+        <div class="mt-2 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
+            {% for platform_account in accounts %}
+                <div class="w-full bg-white border border-zinc-300 rounded-xl flex relative group cursor-pointer gap-2 p-2" >
+                    <div class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
+                        <img class="w-full h-full object-cover" src="{{platform_account.platform.logo_url}}"alt >
+                    </div>
+                    <div class="py-2">
+                        <p class="text-lg font-semibold block">{{ platform_account.platform.name }}</p>
+                        <p class="text-sm text-zinc-500 line-clamp-2">{{ platform_account.platform.description | safe}}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

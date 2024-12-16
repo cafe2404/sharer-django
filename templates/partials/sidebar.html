@@ -1,134 +1,71 @@
 <div
-  class="w-72 flex flex-col px-6"
+  class="w-64 flex flex-col  bg-white border-r py-4"
   x-data="{ active: window.location.pathname }"
 >
   <ul class="space-y-2">
     <li>
       <a
-        href="/platform_accounts/"
-        :class="active.indexOf('platform_accounts') != -1 ? 'bg-blue-200' : 'hover:bg-zinc-200'"
-        class="flex items-center gap-4 py-1 px-4 rounded-full"
+        href="/dashboard/"
+        :class="active.indexOf('dashboard') != -1 ? 'active bg-blue-50 text-blue-600 font-semibold' : 'hover:bg-zinc-100 text-zinc-600'"
+        class="flex items-center gap-4 py-2 px-6 relative group"
       >
-        <svg
-          x-show="active.indexOf('platform_accounts') != -1 "
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="icon icon-tabler icons-tabler-filled icon-tabler-home"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M12.707 2.293l9 9c.63 .63 .184 1.707 -.707 1.707h-1v6a3 3 0 0 1 -3 3h-1v-7a3 3 0 0 0 -2.824 -2.995l-.176 -.005h-2a3 3 0 0 0 -3 3v7h-1a3 3 0 0 1 -3 -3v-6h-1c-.89 0 -1.337 -1.077 -.707 -1.707l9 -9a1 1 0 0 1 1.414 0m.293 11.707a1 1 0 0 1 1 1v7h-4v-7a1 1 0 0 1 .883 -.993l.117 -.007z"
-          />
-        </svg>
-        <svg
-          x-show="active.indexOf('platform_accounts') === -1"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-home"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
-          <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
-          <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
-        </svg>
+        <div class="w-1 h-full bg-blue-600 py-2 left-0 top-0 absolute opacity-0 group-[&.active]:opacity-100 duration-150"></div>
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-layout-dashboard"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 3a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2zm0 12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-2a2 2 0 0 1 2 -2zm10 -4a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2zm0 -8a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-2a2 2 0 0 1 2 -2z" /></svg>
         Trang chủ
       </a>
     </li>
     <li>
       <a
-        href="/store/"
-        :class="active.indexOf('store') !== -1 ? 'bg-blue-200' : 'hover:bg-zinc-200'"
-        class="flex items-center gap-4 py-1 px-4 rounded-full"
+        href="/subscriptions/"
+        :class="active.indexOf('subscriptions') != -1 ? 'active bg-blue-50 text-blue-600 font-semibold' : 'hover:bg-zinc-100 text-zinc-600'"
+        class="flex items-center gap-4 py-2 px-6 relative group"
       >
-        <svg
-          x-show="active.indexOf('store') !== -1"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="icon icon-tabler icons-tabler-filled icon-tabler-brand-windows"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M21 13v5c0 1.57 -1.248 2.832 -2.715 2.923l-.113 .003l-.042 .018a1 1 0 0 1 -.336 .056l-.118 -.008l-4.676 -.585v-7.407zm-10 0v7.157l-5.3 -.662c-1.514 -.151 -2.7 -1.383 -2.7 -2.895v-3.6zm0 -9.158v7.158h-8v-3.6c0 -1.454 1.096 -2.648 2.505 -2.87zm10 2.058v5.1h-8v-7.409l4.717 -.589c1.759 -.145 3.283 1.189 3.283 2.898"
-          />
-        </svg>
-        <svg
-          x-show="active.indexOf('store') === -1"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-brand-windows"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M17.8 20l-12 -1.5c-1 -.1 -1.8 -.9 -1.8 -1.9v-9.2c0 -1 .8 -1.8 1.8 -1.9l12 -1.5c1.2 -.1 2.2 .8 2.2 1.9v12.1c0 1.2 -1.1 2.1 -2.2 1.9z"
-          />
-          <path d="M12 5l0 14" />
-          <path d="M4 12l16 0" />
-        </svg>
-        Cửa hàng tài khoản
+        <div class="w-1 h-full bg-blue-600 py-2 left-0 top-0 absolute opacity-0 group-[&.active]:opacity-100 duration-150"></div>
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-package"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5" /><path d="M12 12l8 -4.5" /><path d="M12 12l0 9" /><path d="M12 12l-8 -4.5" /><path d="M16 5.25l-8 4.5" /></svg>
+        Quản lý gói đăng ký
+      </a>
+    </li>
+    <li>
+      <a
+        href="/transaction-history/"
+        :class="active.indexOf('transaction-history/') != -1 ? 'active bg-blue-50 text-blue-600 font-semibold' : 'hover:bg-zinc-100 text-zinc-600'"
+        class="flex items-center gap-4 py-2 px-6 relative group"
+      >
+        <div class="w-1 h-full bg-blue-600 py-2 left-0 top-0 absolute opacity-0 group-[&.active]:opacity-100 duration-150"></div>
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-calendar-dollar"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M13 21h-7a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h12.5" /><path d="M21 15h-2.5a1.5 1.5 0 0 0 0 3h1a1.5 1.5 0 0 1 0 3h-2.5" /><path d="M19 21v1m0 -8v1" /></svg>
+        Lịch sử thanh toán
+      </a>
+    </li>
+    <li>
+      <a
+        href="/login-history/"
+        :class="active.indexOf('login-history') != -1 ? 'active bg-blue-50 text-blue-600 font-semibold' : 'hover:bg-zinc-100 text-zinc-600'"
+        class="flex items-center gap-4 py-2 px-6 relative group"
+      >
+        <div class="w-1 h-full bg-blue-600 py-2 left-0 top-0 absolute opacity-0 group-[&.active]:opacity-100 duration-150"></div>
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-logs"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 12h.01" /><path d="M4 6h.01" /><path d="M4 18h.01" /><path d="M8 18h2" /><path d="M8 12h2" /><path d="M8 6h2" /><path d="M14 6h6" /><path d="M14 12h6" /><path d="M14 18h6" /></svg>
+        Quản lý đăng nhập
       </a>
     </li>
     <li>
       <a
         href="/settings/"
-        :class="active.indexOf('settings') != -1 ? 'bg-blue-200' : 'hover:bg-zinc-200'"
-        class="flex items-center gap-4 py-1 px-4 rounded-full"
+        :class="active.indexOf('settings') != -1 ? 'active bg-blue-50 text-blue-600 font-semibold' : 'hover:bg-zinc-100 text-zinc-600'"
+        class="flex items-center gap-4 py-2 px-6 relative group"
       >
-        <svg
-          x-show="active.indexOf('settings') === -1"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-settings"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"
-          />
-          <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
-        </svg>
-        <svg
-          x-show="active.indexOf('settings') !== -1"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="icon icon-tabler icons-tabler-filled icon-tabler-settings"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path
-            d="M14.647 4.081a.724 .724 0 0 0 1.08 .448c2.439 -1.485 5.23 1.305 3.745 3.744a.724 .724 0 0 0 .447 1.08c2.775 .673 2.775 4.62 0 5.294a.724 .724 0 0 0 -.448 1.08c1.485 2.439 -1.305 5.23 -3.744 3.745a.724 .724 0 0 0 -1.08 .447c-.673 2.775 -4.62 2.775 -5.294 0a.724 .724 0 0 0 -1.08 -.448c-2.439 1.485 -5.23 -1.305 -3.745 -3.744a.724 .724 0 0 0 -.447 -1.08c-2.775 -.673 -2.775 -4.62 0 -5.294a.724 .724 0 0 0 .448 -1.08c-1.485 -2.439 1.305 -5.23 3.744 -3.745a.722 .722 0 0 0 1.08 -.447c.673 -2.775 4.62 -2.775 5.294 0zm-2.647 4.919a3 3 0 1 0 0 6a3 3 0 0 0 0 -6z"
-          />
-        </svg>
-  
-        Cài đặt chung
+        <div class="w-1 h-full bg-blue-600 py-2 left-0 top-0 absolute opacity-0 group-[&.active]:opacity-100 duration-150"></div>
+        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-settings-2"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19.875 6.27a2.225 2.225 0 0 1 1.125 1.948v7.284c0 .809 -.443 1.555 -1.158 1.948l-6.75 4.27a2.269 2.269 0 0 1 -2.184 0l-6.75 -4.27a2.225 2.225 0 0 1 -1.158 -1.948v-7.285c0 -.809 .443 -1.554 1.158 -1.947l6.75 -3.98a2.33 2.33 0 0 1 2.25 0l6.75 3.98h-.033z" /><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /></svg>
+        Cài đặt tài khoản
       </a>
     </li>
-  </ul>
+    <div class="w-full mt-12 p-4">
+        <div class="flex flex-col items-center justify-center p-2 w-full rounded-lg border text-center">
+          <div class="flex items-center gap-2 ">
+            <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+            <p class="text-md text-zinc-800 font-semibold">{{current_subscription.name}}</p>
+          </div>
+          <p class="text-sm text-zinc-600 font-semibold mb-4">Thời hạn sử dụng đến ngày {{ current_token.expires_at|date:"d/m/Y" }}</p>
+          <button class="mb-2 text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-cyan-400 font-semibold  text-white duration-150 flex items-center justify-center gap-2 rounded-full">Nâng cấp gói</button>
+        </div>
+    </div>
 </div>

@@ -31,10 +31,14 @@
         <meta name="twitter:title" content="Sharer - Chia sẻ tài khoản một cách dễ dàng">
         <meta name="twitter:description" content="Nền tảng chia sẻ tài khoản premium an toàn và tiện lợi">
         <meta name="twitter:image" content="{% static 'images/og-image.png' %}">
-
+        <style>
+            [x-cloak] {
+                display: none;
+            }
+        </style>
     </head>
 
-    <body class="bg-blue-50/70 dark:bg-zinc-900 w-screen h-screen">
+    <body class="bg-zinc-50 dark:bg-zinc-900 w-screen h-screen overflow-x-hidden">
         {% block content %}
         {% endblock content %}
     </body>

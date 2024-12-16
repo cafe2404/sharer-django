@@ -1,0 +1,182 @@
+{% load custom_filters %}
+<div class="flex items-center gap-1 p-1 mb-6 rounded-full justify-center bg-zinc-100 border w-fit mx-auto">
+    <div>
+        <input checked type="radio" name="subscription" value="1" id="duration1" class="hidden peer/duration1">
+        <label for="duration1" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration1:bg-blue-600 peer-checked/duration1:text-white">
+            1 tháng
+        </label>
+        </div>
+    
+        <!-- 3 tháng -->
+        <div>
+        <input type="radio" name="subscription" value="3" id="duration3" class="hidden peer/duration3">
+        <label for="duration3" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration3:bg-blue-600 peer-checked/duration3:text-white">
+            3 tháng
+        </label>
+        </div>
+    
+        <!-- 6 tháng -->
+        <div>
+        <input type="radio" name="subscription" value="6" id="duration6" class="hidden peer/duration6">
+        <label for="duration6" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration6:bg-blue-600 peer-checked/duration6:text-white">
+            6 tháng
+        </label>
+        </div>
+    
+        <!-- 12 tháng -->
+        <div>
+        <input type="radio" name="subscription" value="12" id="duration12" class="hidden peer/duration12">
+        <label for="duration12" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration12:bg-blue-600 peer-checked/duration12:text-white">
+            12 tháng
+        </label>
+        </div>
+</div>
+<div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0" id="subscriptions">
+    {% for subscription in subscriptions %}
+        {% if subscription.level == 2 %}
+        <div data-id="{{subscription.id}}" class="w-full subscription-item flex flex-col max-w-lg p-6 mx-auto justify-between text-zinc-900 bg-blue-50 border border-blue-600 rounded-lg shadow">
+        {% else %}
+        <div data-id="{{subscription.id}}" class="w-full flex flex-col max-w-lg p-6 mx-auto justify-between text-zinc-900 bg-white border border-zinc-300 rounded-lg shadow">
+        {% endif %}
+        <div>
+            <div class="px-2">
+                <div class="flex items-center gap-2">
+                    <h3 class="mb-2 text-2xl font-semibold">{{subscription.name}}</h3>
+                </div>
+                <!-- <p class="font-light text-zinc-500 dark:text-zinc-400 text-sm mb-2">
+                    {{subscription.description}}
+                </p> -->
+                {% for duration in subscription.durations.all %}
+                <div class="flex items-center duration-price" data-duration="{{duration.duration}}" style="display: none;">
+                    <span class="mr-2 text-2xl font-extrabold">{{duration.price | parse_currency}}</span>
+                    <span class="text-zinc-500 dark:text-zinc-400">/{{duration.duration}} tháng</span>
+                    {% if duration.discount_percentage %}
+                        <span class=" p-1 rounded-lg bg-red-500 ml-2 text-sm text-white font-semibold">-{{duration.discount_percentage}}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <div class="mb-8 mt-2 text-left">
+                {% for platform in subscription.platforms.all %}
+                    <div class="flex items-center relative gap-1 p-2 hover:bg-blue-50 duration-150 rounded-full">
+                        <div class="w-6 h-6 overflow-hidden rounded-full">
+                            <img src="{{platform.logo_url}}" alt="" class="w-full h-full object-cover" />
+                        </div>
+                        <span> {{platform.name}} </span>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-green-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% if current_subscription == subscription %}
+            <button class="text-zinc-500 border border-transparent bg-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                Gói đang sử dụng
+            </button>
+        {% else %}
+            {% if subscription.level == 2 %}
+                <button class="subscribe-btn text-white border border-transparent bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Đăng ký ngay
+                </button>
+            {% else %}
+                <button class="subscribe-btn text-zinc-900 border border-blue-600 hover:bg-blue-50 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Đăng ký ngay
+                </button>
+            {% endif %}
+        {% endif %}
+    </div>
+    {% endfor %}
+    <script>
+        // Hiển thị giá theo thời hạn được chọn
+        function showPriceForDuration(duration) {
+            document.querySelectorAll('.duration-price').forEach(el => {
+                if(el.dataset.duration === duration) {
+                    el.style.display = 'flex';
+                } else {
+                    el.style.display = 'none';
+                }
+            });
+        }
+        // Lắng nghe sự kiện thay đổi radio button
+        document.querySelectorAll('input[name="subscription"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                showPriceForDuration(e.target.value);
+            });
+        });
+        // Hiển thị giá mặc định cho duration 1 tháng
+        showPriceForDuration('1');
+    </script>
+    {% if request.user.is_authenticated %}
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // Lấy tất cả các nút "subscribe-btn"
+                const subscribeButtons = document.querySelectorAll(".subscribe-btn");
+
+                // Hàm xử lý đăng ký hoặc nâng cấp
+                const handleSubscription = async (subscriptionPlanId, durationId) => {
+                    const csrftoken = getCSRFToken();
+                    try {
+                        const response = await fetch('/api/orders/create/', {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": csrftoken,
+                            },
+                            body: JSON.stringify({ 
+                                subscription_plan_id: subscriptionPlanId,
+                                subscription_plan_duration_id: durationId
+                            }),
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            window.location.href = `/orders/${data.order_id}/`;
+                        } else {
+                            // Thất bại
+                            console.error('Không thể đăng ký gói');
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                    }
+                };
+
+                // Hàm lấy CSRF token từ cookie
+                const getCSRFToken = () => {
+                    const name = "csrftoken";
+                    const cookies = document.cookie.split("; ");
+                    for (const cookie of cookies) {
+                        const [key, value] = cookie.split("=");
+                        if (key === name) return value;
+                    }
+                    return null;
+                };
+
+                // Hàm lấy duration id từ radio button được chọn
+                const getSelectedDurationId = (subscriptionPlanId) => {
+                    const selectedDuration = document.querySelector(`input[name="duration_${subscriptionPlanId}"]:checked`);
+                    return selectedDuration ? selectedDuration.value : null;
+                };
+            
+                // Thêm sự kiện click vào các nút
+                subscribeButtons.forEach((button) => {
+                    button.addEventListener("click", () => {
+                        const subscriptionPlanId = button.closest("[data-id]").dataset.id;
+                        const durationId = getSelectedDurationId();
+                        handleSubscription(subscriptionPlanId, durationId);
+                    });
+                });
+            });
+            
+        </script>
+    {% else %}
+        <script>
+            const subscribeButtons = document.querySelectorAll(".subscribe-btn");
+            subscribeButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    window.location.href = "/login/";
+                });
+            });
+        </script>
+    {% endif %}
+</div>
+</div>

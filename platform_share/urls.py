@@ -9,6 +9,6 @@ urlpatterns = [
     path('api/platforms/<int:pk>/', PlatformViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='platform-detail'),
     path('api/platform-accounts/', PlatformAccountViewSet.as_view({'get': 'list', 'post': 'create'}), name='platform-account-list'),
     path('api/platform-accounts/<int:pk>/', PlatformAccountViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='platform-account-detail'),
-    path('<path:path>', views.reverse_proxy_semrush, name='reverse_proxy_semrush'),
-    path('', views.reverse_proxy_semrush, name='reverse_proxy_semrush'),
+    # path('<path:path>', views.reverse_proxy_semrush, name='reverse_proxy_semrush'),
+    # path('', views.reverse_proxy_semrush, name='reverse_proxy_semrush'),
 ]

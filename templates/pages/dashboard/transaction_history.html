@@ -1,0 +1,176 @@
+{% extends 'layout.html' %} {% load custom_filters %}
+{% block main %}
+<div class="transaction-history">
+<h2 class="py-2 text-2xl font-semibold mb-4">Lịch sử giao dịch</h2>
+    {% if page_obj.object_list %}
+    <div class="relative flex flex-col w-full text-zinc-700 bg-white border border-zinc-300 rounded-lg ">
+        <div class="relative mx-4 mt-4 text-zinc-700 bg-white rounded-none ">
+          <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <div class="w-full md:w-72">
+              <div class="relative w-full min-w-[300px]">
+                <div class="absolute grid w-5 h-5 top-2/4 right-3 -translate-y-2/4 place-items-center text-blue-zinc-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" aria-hidden="true" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
+                  </svg>
+                </div>
+                <input
+                  id="searchInput"
+                  class="peer w-full appearance-none border focus:border-blue-600 border-zinc-300 bg-white py-1.5 px-4 text-sm text-zinc-700 placeholder-zinc-400 focus:outline-none rounded-lg"
+                  placeholder="Tìm kiếm" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <table id="transactionTable" class="w-full mt-4 text-left table-auto min-w-max">
+            <thead>
+              <tr>
+                <th
+                  class="p-4 transition-colors cursor-pointer border-y border-blue-zinc-100 bg-blue-zinc-50/50 hover:bg-blue-zinc-50">
+                  <p
+                    class="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-zinc-900 opacity-70">
+                    #
+                  </p>
+                </th>
+                <th
+                  class="p-4 transition-colors cursor-pointer border-y border-blue-zinc-100 bg-blue-zinc-50/50 hover:bg-blue-zinc-50">
+                  <p
+                    class="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-zinc-900 opacity-70">
+                    Mã đơn hàng
+                  </p>
+                </th>
+                <th
+                  class="p-4 transition-colors cursor-pointer border-y border-blue-zinc-100 bg-blue-zinc-50/50 hover:bg-blue-zinc-50">
+                  <p
+                    class="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-zinc-900 opacity-70">
+                    Gói đăng ký
+                  </p>
+                </th>
+                <th
+                  class="p-4 transition-colors cursor-pointer border-y border-blue-zinc-100 bg-blue-zinc-50/50 hover:bg-blue-zinc-50">
+                  <p
+                    class="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-zinc-900 opacity-70">
+                    Ngày giao dịch
+                  </p>
+                </th>
+                <th
+                  class="p-4 transition-colors cursor-pointer border-y border-blue-zinc-100 bg-blue-zinc-50/50 hover:bg-blue-zinc-50">
+                  <p
+                    class="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-zinc-900 opacity-70">
+                    Tổng tiền
+                  </p>
+                </th>
+                <th
+                  class="p-4 transition-colors cursor-pointer border-y border-blue-zinc-100 bg-blue-zinc-50/50 hover:bg-blue-zinc-50">
+                  <p
+                    class="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-zinc-900 opacity-70">
+                    Đã chuyển
+                  </p>
+                </th>
+                <th
+                  class="p-4 transition-colors cursor-pointer border-y border-blue-zinc-100 bg-blue-zinc-50/50 hover:bg-blue-zinc-50">
+                  <p
+                    class="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-zinc-900 opacity-70">
+                    Trạng thái
+                  </p>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for transaction in page_obj.object_list %}
+                <tr>
+                    <td class="p-4 border-b border-blue-zinc-50">
+                        <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-zinc-900">
+                            {{ forloop.counter }}
+                        </p>
+                    </td>
+                    <td class="p-4 border-b border-blue-zinc-50">
+                        <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-zinc-900">
+                            {{ transaction.order_id }}
+                        </p>
+                    </td>
+                    <td class="p-4 border-b border-blue-zinc-50">
+                        <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-zinc-900">
+                            {{ transaction.subscription_duration }}
+                        </p>
+                    </td>
+                    <td class="p-4 border-b border-blue-zinc-50">
+                        <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-zinc-900">
+                            {{ transaction.created_at|date:" H:i d/m/Y" }}
+                        </p>
+                    </td>
+                    <td class="p-4 border-b border-blue-zinc-50">
+                        <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-zinc-900">
+                            {{ transaction.amount| parse_currency }}
+                        </p>
+                    </td>
+                    <td class="p-4 border-b border-blue-zinc-50">
+                        <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-zinc-900">
+                            {{ transaction.transfer_amount| parse_currency }}
+                        </p>
+                    </td>
+                    <td class="p-4 border-b border-blue-zinc-50">
+                        {% if transaction.status == 'paid' %}
+                        <span class="text-green-600 text-sm py-1 px-2 bg-green-100 rounded-full font-semibold">Đã thanh toán</span>
+                        {% else %}
+                        <span class="text-red-600 text-sm py-1 px-2 bg-red-100 rounded-full font-semibold">Hủy</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if is_paginated%}
+        <div class="flex items-center justify-between p-4">
+          <nav class="flex items-center -space-x-px" aria-label="Pagination">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="min-h-[38px] min-w-[38px] py-2 px-2.5 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 dark:border-neutral-700 dark:text-white dark:hover:bg-white/10" aria-label="Previous">
+              <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 size-3.5" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"></path>
+              </svg>
+              <span class="sr-only">Previous</span>
+            </a>
+            {% endif %}
+
+            {% for page in page_obj.paginator.page_range %}
+              {% if page == page_obj.number %}
+              <button type="button" aria-current="page" class="min-h-[38px] min-w-[38px] bg-zinc-200 text-zinc-800 border border-zinc-200 py-2 px-3 text-sm dark:bg-neutral-600 dark:border-neutral-700 dark:text-white">{{ page }}</button>
+              {% else %}
+              <a href="?page={{ page }}" class="min-h-[38px] min-w-[38px] py-2 px-3 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 dark:border-neutral-700 dark:text-white dark:hover:bg-white/10">{{ page }}</a>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="min-h-[38px] min-w-[38px] py-2 px-2.5 border border-zinc-200 text-zinc-800 hover:bg-zinc-100 dark:border-neutral-700 dark:text-white dark:hover:bg-white/10" aria-label="Next">
+              <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 size-3.5" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6"></path>
+              </svg>
+              <span class="sr-only">Next</span>
+            </a>
+            {% endif %}
+          </nav>
+        </div>
+        {%endif%}
+    </div>
+    {% else %}
+        <p>Không có giao dịch nào trong lịch sử của bạn.</p>
+    {% endif %}
+</div>
+
+<script>
+document.getElementById('searchInput').addEventListener('input', function () {
+  const filter = this.value.toLowerCase();
+  const rows = document.querySelectorAll('#transactionTable tbody tr');
+
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(filter) ? '' : 'none';
+  });
+});
+</script>
+
+{% endblock %}

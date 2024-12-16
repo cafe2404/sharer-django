@@ -19,11 +19,15 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('', views.default_view, name='default'),  # URL gốc
-    path("", include("account.urls")),
-    path("", include("store.urls")),
-    path("", include("platform_share.urls")),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('',include('landing.urls')),
+    path("", include("custom_user.urls")),
+    path("api/subscriptions/", include("subscriptions.urls")),
+    path("", include("orders.urls")),
+    path("api/",include('platforms.urls')),
+    path('api/',include('coupons.urls'))
+]# Phục vụ static và media files trong môi trường phát triển
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
+from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
+from django.templatetags.static import static
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,6 +35,7 @@ CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"]
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'unfold',  # before django.contrib.admin
     'unfold.contrib.filters',  # optional, if special filters are needed
     'unfold.contrib.forms',  # optional, if special form elements are needed
@@ -47,12 +52,18 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'account',
-    'platform_share',
-    'store',
+    'channels',
+    'custom_user',
+    'subscriptions',
+    'platforms',
+    'landing',
+    'orders',
+    'sharer',
+    'coupons',
 ]
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -76,6 +87,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'subscriptions.context_processors.subscriptions_context',
             ],
         },
     },
@@ -129,8 +141,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -140,24 +150,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-STATIC_URL = '/static/'
+STATIC_URL = '/static/'  # Đường dẫn URL cho tệp tĩnh
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static'),  # Thư mục chứa các tệp tĩnh của bạn
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Thư mục thu thập tệp tĩnh
 
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 #Cors settings 
 CORS_ALLOW_ALL_ORIGINS = True  # Cho phép tất cả các nguồn truy cập vào API của bạn
-
-
 #custom user model
-AUTH_USER_MODEL = 'account.CustomUser'
+AUTH_USER_MODEL = 'custom_user.CustomUser'
 
 
 #unfold admin setting
-from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
-from django.templatetags.static import static
 UNFOLD = {
     'SITE_TITLE': 'Sharer Admin',
     'SITE_HEADER': 'Sharer Admin',
@@ -186,47 +194,133 @@ UNFOLD = {
         },
     },
     'SIDEBAR': {
-        'show_search': False,  # Search in applications and models names
-        'show_all_applications': False,  # Dropdown with all applications and models
+        'show_all_applications': True,  
         'navigation': [
             {
-                'title': _('Navigation'),
-                'separator': True,  # Top border
-                'collapsible': True,  # Collapsible group of links
                 'items': [
+                    # {
+                    #     'title': _('Dashboard'),
+                    #     'icon': 'dashboard',  # Supported icon set: https://fonts.google.com/icons
+                    #     'link': reverse_lazy('admin:index'),
+                    #     'permission': lambda request: request.user.is_superuser,
+                    # },
                     {
-                        'title': _('Dashboard'),
-                        'icon': 'dashboard',  # Supported icon set: https://fonts.google.com/icons
-                        'link': reverse_lazy('admin:index'),
-                        'permission': lambda request: request.user.is_superuser,
-                    },
-                    {
-                        'title': _('Quản lý người dùng'),
+                        'title': _('Người dùng'),
                         'icon': 'people',
-                        'link': reverse_lazy('admin:account_customuser_changelist'),
+                        'link': reverse_lazy('admin:custom_user_customuser_changelist'),
+                        'permission': lambda request: request.user.is_superuser,
+                    },
+
+                    {
+                        'title': _('Kế hoạch'),
+                        'icon': 'stacks',
+                        'link': reverse_lazy('admin:subscriptions_subscriptionplan_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
                     {
-                        'title': _('Quản lý nền tảng'),
+                        'title': _('Nhóm tài khoản và token'),
+                        'icon': 'inventory_2',
+                        'link': reverse_lazy('admin:subscriptions_package_changelist'),
+                        'permission': lambda request: request.user.is_superuser,
+                    },
+                    {
+                        'title': _('Nền tảng và tài khoản'),
                         'icon': 'language',
-                        'link': reverse_lazy('admin:platform_share_platform_changelist'),
+                        'link': reverse_lazy('admin:platforms_platform_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
                     {
-                        'title': _('Quản lý nhóm tài khoản'),
-                        'icon': 'groups',
-                        'link': reverse_lazy('admin:platform_share_accountgroup_changelist'),
+                        'title': _('Đơn hàng'),
+                        'icon': 'list_alt',
+                        'link': reverse_lazy('admin:orders_order_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
                     {
-                        'title': _('Quản lý tài khoản chia sẻ'),
-                        'icon': 'folder_shared',
-                        'link': reverse_lazy('admin:platform_share_platformaccount_changelist'),
+                        'title': _('Mã giảm giá'),
+                        'icon': 'money',
+                        'link': reverse_lazy('admin:coupons_coupon_changelist'),
+                        'permission': lambda request: request.user.is_superuser,
+                    },
+                    {
+                        'title': _('Liên kết mạng xã hội'),
+                        'icon': 'share',
+                        'link': reverse_lazy('admin:landing_sociallink_changelist'),
+                        'permission': lambda request: request.user.is_superuser,
+                    },
+                    {
+                        'title': _('Nội dung Landing Page'),
+                        'icon': 'article',
+                        'link': reverse_lazy('admin:landing_landingpagecontent_changelist'),
+                        'permission': lambda request: request.user.is_superuser,
+                    },
+                    {
+                        'title': _('Cài đặt thanh toán'),
+                        'icon': 'credit_card',
+                        'link': reverse_lazy('admin:orders_paymentsetting_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
                 ],
             },
         ],
+    },
+    "TABS": [
+        {
+            "models": [
+                "platforms.platform",
+                "platforms.account",
+            ],
+            "items": [
+                {
+                    "title": _("Nền tảng"),
+                    "link": reverse_lazy("admin:platforms_platform_changelist"),
+                },
+                {
+                    "title": _("Tài khoản"),
+                    "link": reverse_lazy("admin:platforms_account_changelist"),
+                },
+            ],
+        },
+        {
+            "models": [
+                "subscriptions.package",
+                "subscriptions.packagetoken",
+            ],
+            "items": [
+                   {
+                    "title": _("Nhóm tài khoản"),
+                    "link": reverse_lazy("admin:subscriptions_package_changelist"),
+                },
+                {
+                    "title": _("Mã truy cập"),
+                    "link": reverse_lazy("admin:subscriptions_packagetoken_changelist"),
+                },
+            ],
+        },
+                {
+            "models": [
+                "subscriptions.subscriptionplan",
+                "subscriptions.subscriptionplanduration",
+            ],
+            "items": [
+                {
+                    "title": _("Kế hoạch"),
+                    "link": reverse_lazy("admin:subscriptions_subscriptionplan_changelist"),
+                },
+                {
+                    "title": _("Thời hạn"),
+                    "link": reverse_lazy("admin:subscriptions_subscriptionplanduration_changelist"),
+                },
+            ],
+        },
+    ],
+    "EXTENSIONS": {
+        "modeltranslation": {
+            "flags": {
+                "en": "🇬🇧",
+                "fr": "🇫🇷",
+                "nl": "🇧🇪",
+            },
+        },
     },
 }
 
@@ -236,15 +330,15 @@ LOGIN_URL = '/login/'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }
-from datetime import timedelta
 
 # Optional: Configure JWT settings (expiration, etc.)
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Thời gian hết hạn của access token
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Thời gian hết hạn của refresh token
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # Thời gian hết hạn của access token
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # Thời gian hết hạn của refresh token
     'ROTATE_REFRESH_TOKENS': True,  # Cho phép làm mới refresh token
     'BLACKLIST_AFTER_ROTATION': True,  # Đưa token vào blacklist sau khi refresh
     'ALGORITHM': 'HS256',
@@ -253,3 +347,20 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
 }
+
+
+
+ASGI_APPLICATION = 'sharer.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],  # Đảm bảo Redis đang chạy trên cổng này
+        },
+    },
+}
+
+
+# Custom error handlers
+handler404 = 'sharer.views.handler404'

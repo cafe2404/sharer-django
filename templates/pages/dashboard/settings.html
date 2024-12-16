@@ -1,0 +1,219 @@
+{% extends 'layout.html' %} {% block main %}
+
+<div class="mx-4 sm:mx-8 xl:mx-auto max-w-5xl">
+  {% if messages %}
+    <ul class="px-8 space-y-2 mb-4">
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <li class="success px-3 py-3 rounded-md text-sm bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400">
+            {{ message }}
+        </li>
+        {% elif message.tags == 'error' %}
+        <li class="error px-3 py-3 rounded-md text-sm bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400">
+            {{ message }}
+        </li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+  {% endif %}
+  <div class="rounded-xl sm:px-8">
+ 
+    <div class="border border-zinc-300 bg-white rounded-lg">
+      <div class="px-4 py-2 border-b border-b-zinc-300">
+        <p class="text-lg font-semibold">Mã truy cập</p>
+      </div>
+      <div class="p-4 space-y-3">
+        <p class="py-2 text-sm text-zinc-600">
+          Đây là Authtoken cá nhân của bạn. Sử dụng Authtoken này để xác thực
+          extension mà bạn đã tải xuống.
+        </p>
+        <div class="grid grid-cols-5 items-center gap-2">
+          <div class="col-span-1 text-right">
+            <span class="text-sm text-gray-500"> Mã truy cập:</span>
+          </div>
+          <div class="col-span-3">
+            <input
+              type="password"
+              name="token"
+              class="w-full appearance-none border border-zinc-300 bg-white py-1.5 px-4 text-sm text-zinc-700 placeholder-zinc-400 focus:outline-none rounded-lg"
+              placeholder="{{current_token.token}}"
+              disabled
+            />
+          </div>
+        </div>
+        <div class="grid grid-cols-5">
+          <div class="col-start-2">
+            <button
+              type="submit"
+              class="btn-copy-token font-semibold text-sm rounded-lg border border-blue-600 px-4 py-2 hover:bg-blue-50 duration-150 text-blue-600 flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  stroke="none"
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+                <path
+                  d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z"
+                />
+                <path
+                  d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"
+                />
+              </svg>
+              Sao chép
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="border border-zinc-300 bg-white rounded-lg mt-4">
+      <form method="POST">
+        {% csrf_token %}
+        <!-- Email input fields here -->
+        <div class="px-4 py-2 border-b border-b-zinc-300">
+          <p class="text-lg font-semibold">Tài khoản</p>
+        </div>
+        <div class="p-4 space-y-3">
+          <p class="py-2 text-sm text-zinc-600">
+            Change the name of this ngrok account. This should be the name of your
+            company/organization or your name if you are an individual.
+          </p>
+          <div class="grid grid-cols-5 items-center gap-2">
+            <div class="col-span-1 text-right">
+              <span class="text-sm text-gray-500"> Địa chỉ email:</span>
+            </div>
+            <div class="col-span-3">
+              <input
+                type="text"
+                name="email"
+                class="w-full appearance-none border border-zinc-300 bg-white py-1.5 px-4 text-sm text-zinc-700 placeholder-zinc-400 focus:outline-none rounded-lg"
+                value="{{request.user.email}}"
+                placeholder="Email của bạn"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-5">
+            <div class="col-start-2">
+              <button
+                type="submit"
+                class="font-semibold text-sm rounded-lg border border-blue-600 px-4 py-2 hover:bg-blue-50 duration-150 text-blue-600"
+              >
+                Cập nhật
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="border border-zinc-300 bg-white rounded-lg mt-4">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="px-4 py-2 border-b border-b-zinc-300">
+          <p class="text-lg font-semibold">Mật khẩu</p>
+        </div>
+        <div class="p-4 space-y-3">
+          <p class="py-2 text-sm text-zinc-600">
+            Đổi mật khẩu sẽ đăng xuất ở các thiết bị khác
+          </p>
+          <div class="grid grid-cols-5 items-center gap-2">
+            <div class="col-span-1 text-right">
+              <span class="text-sm text-gray-500">Mật khẩu hiện tại:</span>
+            </div>
+            <div class="col-span-3">
+              <input
+                type="password"
+                name="current_password"
+                class="w-full appearance-none border border-zinc-300 bg-white py-1.5 px-4 text-sm text-zinc-700 placeholder-zinc-400 focus:outline-none rounded-lg"
+                placeholder="••••••••••••••••"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-5 items-center gap-2">
+            <div class="col-span-1 text-right">
+              <span class="text-sm text-gray-500">Mật khẩu mới:</span>
+            </div>
+            <div class="col-span-3">
+              <input
+                type="password"
+                name="new_password"
+                class="w-full appearance-none border border-zinc-300 bg-white py-1.5 px-4 text-sm text-zinc-700 placeholder-zinc-400 focus:outline-none rounded-lg"
+                placeholder="••••••••••••••••"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-5 items-center gap-2">
+            <div class="col-span-1 text-right">
+              <span class="text-sm text-gray-500">Xác nhận mật khẩu:</span>
+            </div>
+            <div class="col-span-3">
+              <input
+                type="password"
+                name="confirm_password"
+                class="w-full appearance-none border border-zinc-300 bg-white py-1.5 px-4 text-sm text-zinc-700 placeholder-zinc-400 focus:outline-none rounded-lg"
+                placeholder="••••••••••••••••"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-5">
+            <div class="col-start-2">
+              <button
+                type="submit"
+                class="font-semibold text-sm rounded-lg border border-blue-600 px-4 py-2 hover:bg-blue-50 duration-150 text-blue-600"
+              >
+                Lưu mật khẩu
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="border border-zinc-300 bg-white rounded-lg mt-4">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="px-4 py-2 border-b border-b-zinc-300">
+          <p class="text-lg font-semibold">Xóa tài khoản</p>
+        </div>
+        <div class="p-4 space-y-3">
+          <p class="py-2 text-sm text-zinc-600">
+            Thao tác này sẽ xóa vĩnh viễn tài khoản này. Bạn hoặc bất kỳ ai trong
+            nhóm tài khoản này sẽ không thể truy cập vào tài khoản này nữa.
+          </p>
+          <div class="grid grid-cols-5">
+            <div class="">
+              <button
+                type="submit" name="delete_account" onclick="return confirm('Bạn có chắc chắn muốn xóa tài khoản?')"
+                class="font-semibold text-sm rounded-lg border border-red-600 px-4 py-2 hover:bg-red-50 duration-150 text-red-600 flex items-center gap-2"
+              >
+                <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-trash"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                Tiếp tục xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelector('.btn-copy-token').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText('{{current_token.token}}');
+      alert('Đã sao chép token!');
+    } catch (err) {
+      alert('Không thể sao chép token');
+    }
+  });
+  </script>
+  
+{% endblock %}
