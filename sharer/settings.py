@@ -153,7 +153,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 STATIC_URL = '/static/'  # Đường dẫn URL cho tệp tĩnh
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Thư mục chứa các tệp tĩnh của bạn
+    os.path.join(BASE_DIR, 'staticfiles'),  # Thư mục chứa các tệp tĩnh của bạn
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Thư mục thu thập tệp tĩnh
 
