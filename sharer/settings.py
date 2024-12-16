@@ -29,8 +29,9 @@ SECRET_KEY = 'django-insecure-=^v2tvlr5fkidj%u1=c&=1ch4%7v19x)n5m9ychszs=q5+-vj-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000"] 
+ALLOWED_HOSTS = ['160.187.246.61','localhost','127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000",'http://160.187.246.61/'] 
+
 
 # Application definition
 
@@ -154,7 +155,7 @@ STATIC_URL = '/static/'  # Đường dẫn URL cho tệp tĩnh
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),  # Thư mục chứa các tệp tĩnh của bạn
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Thư mục thu thập tệp tĩnh
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Thư mục thu thập tệp tĩnh
 
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -337,7 +338,7 @@ REST_FRAMEWORK = {
 
 # Optional: Configure JWT settings (expiration, etc.)
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=30),  # Thời gian hết hạn của access token
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),  # Thời gian hết hạn của access token
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),  # Thời gian hết hạn của refresh token
     'ROTATE_REFRESH_TOKENS': True,  # Cho phép làm mới refresh token
     'BLACKLIST_AFTER_ROTATION': True,  # Đưa token vào blacklist sau khi refresh
