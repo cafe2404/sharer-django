@@ -31,7 +31,12 @@ DEBUG = True
 
 CORS_ALLOW_ALL_ORIGINS = True 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000","http://127.0.0.1:8000",'http://160.187.246.61/','https://cc7d-42-114-37-162.ngrok-free.app'] 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    'http://160.187.246.61/',
+    'http://160.187.246.140/'
+    ] 
 
 # Application definition
 
