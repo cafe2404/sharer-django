@@ -19,7 +19,6 @@ from django.templatetags.static import static
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -158,10 +157,11 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media setting
-MEDIA_URL = 'media/'
 if DEBUG:
+    MEDIA_URL = 'media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
+    MEDIA_URL = '/media/'
     MEDIA_ROOT = '/var/www/sharer/media'
     
 # Cấu hình cho file tĩnh
