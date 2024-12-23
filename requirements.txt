@@ -15,3 +15,4 @@ daphne
 channels-redis
 python-dateutil
 psycopg2
+django-import-export
