@@ -26,6 +26,8 @@ class LandingPageContent(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     document_url = models.URLField(blank=True, null=True, verbose_name="Đường dẫn tài liệu sử dụng")
+    extension_url = models.URLField(blank=True, null=True, verbose_name="Đường dẫn tải xuống extension")
+    
     is_active = models.BooleanField(default=True, verbose_name="Kích hoạt")
     class Meta:
         verbose_name = "Nội dung Landing Page"

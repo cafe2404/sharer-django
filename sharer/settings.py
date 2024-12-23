@@ -31,7 +31,7 @@ DEBUG = True
 
 CORS_ALLOW_ALL_ORIGINS = True 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000","http://127.0.0.1:8000",'http://160.187.246.61/','https://fdf0-42-114-37-162.ngrok-free.app'] 
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000","http://127.0.0.1:8000",'http://160.187.246.61/','https://cc7d-42-114-37-162.ngrok-free.app'] 
 
 # Application definition
 
@@ -213,7 +213,6 @@ UNFOLD = {
                         'link': reverse_lazy('admin:custom_user_customuser_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
-
                     {
                         'title': _('Kế hoạch'),
                         'icon': 'stacks',
@@ -267,6 +266,23 @@ UNFOLD = {
         ],
     },
     "TABS": [
+        {
+            "models": [
+                "customuser.customuser",
+                "customuser.usersession",
+            ],
+            "items": [
+                {
+                    "title": _("Người dùng"),
+                    "link": reverse_lazy("admin:custom_user_customuser_changelist"),
+                },
+                {
+                    "title": _("Phiên đăng nhập"),
+                    "link": reverse_lazy("admin:custom_user_usersession_changelist"),
+                },
+     
+            ],
+        },
          {
             "models": [
                 "landing.landingpagecontent",

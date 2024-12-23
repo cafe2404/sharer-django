@@ -1,0 +1,41 @@
+{% extends "root_content.html" %} {% load static %} {% load custom_filters %}
+{% block title %}Xác thực - Sharer{% endblock %}
+{% block root_content %}
+<div class="w-full h-full flex justify-center items-center relative">
+  <a href='/' class="absolute top-12 left-12">
+    <img src="{% static 'images/logo-full.svg' %}" alt="Logo" class="w-64" />
+  </a>
+  <div class="absolute bottom-0 left-0">
+    <img src="{% static 'images/bg-login-wind.svg' %}" alt="Logo" />
+  </div>
+  <div class="grid grid-cols-1 gap-4">
+    <div class=" max-w-md h-auto bg-white rounded-2xl border border-zinc-300 p-12 text-center overflow-hidden relative">
+      <header class="mb-4 flex items-center justify-center flex-col">
+          <img src="https://img.icons8.com/?size=100&id=70yRC8npwT3d&format=png&color=000000" alt="" srcset="">
+          <h1 class="text-4xl font-bold mb-2">Đồng bộ extension</h1>
+          <p class=" text-zinc-800">Bạn đã đồng bộ extension thành công, có thể đóng tab này và sử dụng extension.</p>
+      </header>
+      <button id="button" type="button" class="w-full px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 font-semibold text-sm">
+          Đóng tab
+      </button>
+    </div>
+    <div class="flex gap-2 items-center justify-center mx-auto ">
+      <a href="/" class="text-sm text-zinc-500 hover:text-blue-600">Tới trang chủ</a>
+    </div>
+  </div>
+</div>
+<script>
+      window.addEventListener('load', ()=>{
+        window.postMessage({ 
+            type: 'AUTHENTICATED_EXTENSION', 
+            data: { token: "{{access_token}}",user:'{{request.user.username}}',refreshToken:'{{refresh_token}}'} 
+          }, 
+          window.location.href
+        )
+        document.getElementById('button').addEventListener('click', () => {
+          window.close();
+        });
+      })
+</script>
+
+{% endblock root_content %}

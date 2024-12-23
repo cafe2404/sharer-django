@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from custom_user.models import CustomUser as User 
+from custom_user.models import CustomUser as User , UserSession
 from django.utils.translation import gettext_lazy as _
 from unfold.admin import ModelAdmin
 from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
@@ -14,6 +14,7 @@ class CustomAdminClass(BaseUserAdmin,ModelAdmin):
     list_display = [
         "display_header",
         "is_active",
+        'has_used_trial',
         "display_staff",
         "display_superuser",
     ]
@@ -22,7 +23,7 @@ class CustomAdminClass(BaseUserAdmin,ModelAdmin):
         (
             _("Thông tin cá nhân"),
             {
-                "fields": (("first_name", "last_name"),( "email","phone_number"), "avatar"),
+                "fields": (("first_name", "last_name"),( "email","phone_number"), "avatar",'has_used_trial'),
                 "classes": ["tab"],
             },
         ),
@@ -55,6 +56,7 @@ class CustomAdminClass(BaseUserAdmin,ModelAdmin):
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
     list_filter = ("is_staff",)
+    
     @display(description=_("User"))
     def display_header(self, instance: User):
         return instance.username
@@ -67,3 +69,10 @@ class CustomAdminClass(BaseUserAdmin,ModelAdmin):
     def display_superuser(self, instance: User):
         return instance.is_superuser
 
+
+@admin.register(UserSession)
+class UserSessionAdmin(ModelAdmin):
+    list_display = ['user', 'device_uuid', 'is_active', 'last_login']
+    list_filter = ['is_active']
+    search_fields = ['user__username', 'device_uuid']
+    readonly_fields = ['user', 'device_uuid', 'is_active', 'last_login']

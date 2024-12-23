@@ -1,6 +1,6 @@
-{% extends "_base.html" %} {% load static %} {% load custom_filters %}
+{% extends "root_content.html" %} {% load static %} {% load custom_filters %}
 {% block title %}Xác thực - Sharer{% endblock %}
-{% block content %}
+{% block root_content %}
 <div class="w-full h-full flex justify-center items-center relative">
   <a href='/' class="absolute top-12 left-12">
     <img src="{% static 'images/logo-full.svg' %}" alt="Logo" class="w-64" />
@@ -70,7 +70,11 @@
           </div>
         </div>
       </div>
-      <a href="/logout/" class="mx-auto text-sm text-zinc-500 hover:text-blue-600">Đăng xuất</a>
+      <div class="flex gap-2 items-center justify-center mx-auto ">
+          <a href="/change-email/" class="text-sm text-zinc-500 hover:text-blue-600">Thay đổi email</a>
+           <span class="text-zinc-500">•</span>
+        <a href="/logout/" class="text-sm text-zinc-500 hover:text-blue-600">Đăng xuất</a>
+      </div>
   </div>
 </div>
 <script>
@@ -159,4 +163,4 @@
         });
     });
 </script>
-{% endblock content %}
+{% endblock root_content %}

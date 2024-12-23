@@ -1,7 +1,6 @@
 from django import forms
 from django.core.validators import RegexValidator,EmailValidator,MinLengthValidator
-
-
+from .models import CustomUser as User
 class SignupForm(forms.Form):
     username = forms.CharField(
         max_length=150,
@@ -26,11 +25,7 @@ class SignupForm(forms.Form):
             'id': 'email',
             'required': True,
         }),
-        validators=[
-            EmailValidator(
-                message='Email không hợp lệ',
-            ),
-        ]
+        
     )
     phone_number = forms.CharField(
         widget=forms.TextInput(attrs={
@@ -76,14 +71,18 @@ class SignupForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
+        username = cleaned_data.get('username')
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
         email = cleaned_data.get("email")
         if password != confirm_password:
             self.add_error('confirm_password', 'Mật khẩu không khớp')
+            
+        if username and User.objects.filter(username=username).exists():
+            self.add_error('username', 'Tên đăng nhập đã tồn tại') 
         # Kiểm tra email không trùng lặp
-        # if email:
-        #     if User.objects.filter(email=email).exists():
-        #         self.add_error('email', 'Email đã được sử dụng')
+        if email:
+            if User.objects.filter(email=email).exists():
+                self.add_error('email', 'Email đã được sử dụng')
                 
         return cleaned_data

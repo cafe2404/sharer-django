@@ -80,11 +80,11 @@
     </div>
     {% endif %}
     <div class="border border-zinc-300 bg-white rounded-lg mt-4">
-      <form method="POST">
+      <form method="POST" action="{% url 'change_email' %}">
         {% csrf_token %}
         <!-- Email input fields here -->
         <div class="px-4 py-2 border-b border-b-zinc-300">
-          <p class="text-lg font-semibold">Tài khoản</p>
+          <p class="text-lg font-semibold">Email</p>
         </div>
         <div class="p-4 space-y-3">
           <p class="py-2 text-sm text-zinc-600">

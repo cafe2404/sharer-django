@@ -4,7 +4,7 @@ from .models import PaymentSetting
 from subscriptions.models import SubscriptionPlanDuration
 import json
 from coupons.models import Coupon, UserCoupon
-
+from subscriptions.serializers import SubscriptionPlanDurationSerializer
 
 
 def apply_coupon_to_order(order, user, coupon_code):
@@ -39,7 +39,8 @@ def update_order_duration(order, duration_id):
 
     order.subscription_duration = duration
     order.save()
-    return {"success": True, "message": "Thời hạn đã được cập nhật!", "order": order, "duration": duration.duration}
+    
+    return {"success": True, "message": "Thời hạn đã được cập nhật!", "duration": SubscriptionPlanDurationSerializer(duration).data}
 
 
 

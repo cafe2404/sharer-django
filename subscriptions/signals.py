@@ -6,6 +6,6 @@ from .models import PackageToken
 @receiver(post_delete, sender=PackageToken)
 def remove_user_from_package_buyers(sender, instance, **kwargs):
     # Xóa người dùng khỏi danh sách buyers của package khi token bị xóa
-    if instance.user and instance.package:
-        instance.package.buyers.remove(instance.user)
-        instance.package.save()
+    if instance.user and instance.account_group:
+        instance.account_group.buyers.remove(instance.user)
+        instance.account_group.save()

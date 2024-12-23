@@ -1,6 +1,6 @@
-{% extends "_base.html" %} {% load static %}
+{% extends "root_content.html" %} {% load static %}
 {% load custom_filters %}
-{% block content %}
+{% block root_content %}
 {% load static %}
     <div x-data="{qrshow: false}">
         <nav>
@@ -158,13 +158,13 @@
                         </div>
                         <div class="space-y-2 flex flex-col py-3">
                             <span class="text-zinc-500 text-sm">Thông tin đơn hàng</span>
-                            <p class="font-semibold text-zinc-800 leading-none text-lg">Gói {{order.subscription_plan.name}} - <span id="duration-text">{{order.subscription_duration.duration}} tháng</span></p>
+                            <p class="font-semibold text-zinc-800 leading-none text-lg">{{order.subscription_plan.name}}, <span id="duration-text">{{order.subscription_duration.duration}} tháng, {{order.subscription_duration.price | parse_currency}} </span></p>
                         </div>
                         
-                        <div class="space-y-2 flex flex-col py-3">
+                        <!-- <div class="space-y-2 flex flex-col py-3">
                             <span class="text-zinc-500 text-sm">Giá gói</span>
                             <p class="font-semibold text-zinc-800 leading-none text-lg">{{order.subscription_duration.price | parse_currency }}</p>
-                        </div>
+                        </div> -->
                         <div class="space-y-2 flex flex-col py-3">
                             <span class="text-zinc-500 text-sm">Mã giảm giá</span>
                             <div id="coupon-list" class="font-semibold text-zinc-800 leading-none text-lg flex items-center gap-2 w-full flex-wrap">
@@ -172,7 +172,7 @@
                                 {% for coupon in order.coupons.all %}
                                     <div data-code="{{coupon.code}}" class="coupon-item text-sm line-clamp-1 p-1 rounded-md bg-blue-50 text-blue-600 flex items-center gap-1 justify-between group">
                                         <span>{{ coupon.code }}</span>
-                                        <button onclick="removeCoupon('{{coupon.code}}')"  class="opacity-0 group-hover:opacity-100 text-zinc-600"><svg xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg></button>
+                                        <button onclick="removeCoupon('{{coupon.code}}')"  class="hover:text-zinc-800 opacity-100 text-zinc-600"><svg xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-x"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M18 6l-12 12" /><path d="M6 6l12 12" /></svg></button>
                                     </div>
                                 {% endfor %}
                                 {% else %}
@@ -252,7 +252,7 @@
                     });
                     const data = await response.json();
                     if (data.status == 'success') {
-                        window.location.href = '/orders/payment-success/';
+                        window.location.href = '{% url "register_subscription_success" %}'
                     } else {
                         console.error('Failed to register subscription');
                     }
@@ -282,6 +282,7 @@
                 const data = await response.json();
                 document.getElementById('price-text').textContent = data.price;
                 document.getElementById('qr_code').src = data.qr_code;
+                document.getElementById('duration-text').textContent = `${data.duration.duration} tháng, ${data.duration.formatted_price}`;
             } catch (error) {
                 console.error('Error updating duration:', error);
             }
@@ -297,7 +298,7 @@
             const newCouponHTML = `
                 <div data-code='${couponCode}' class="coupon-item text-sm line-clamp-1 p-1 rounded-md bg-blue-50 text-blue-600 flex items-center gap-1 justify-between group">
                     <span>${couponCode}</span>
-                    <button onclick="removeCoupon('${couponCode}')" class="opacity-0 group-hover:opacity-100 text-zinc-600">
+                    <button onclick="removeCoupon('${couponCode}')" class="hover:text-zinc-800 opacity-100 text-zinc-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">
                             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                             <path d="M18 6l-12 12" />
@@ -366,6 +367,7 @@
                 if (data.success) {
                     removeCouponElm(couponCode);
                     document.getElementById('price-text').textContent = data.price;
+                    document.getElementById('qr_code').src = data.qr_code;
                 }
             } catch (err) {
                 console.error(err);

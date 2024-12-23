@@ -5,7 +5,9 @@ from django.http import HttpResponse
 from bs4 import BeautifulSoup
 from django.templatetags.static import static
 from platforms.models import AccountCookie
-from django.shortcuts import get_object_or_404
+from django.shortcuts import redirect
+from subscriptions.models import PackageToken
+
 
 def modifiy_content(content,request):
     soup = BeautifulSoup(content, 'html.parser')
@@ -34,7 +36,7 @@ def modifiy_content(content,request):
 
     # Thêm thẻ <style> nếu cần
     style_tag = soup.new_tag('style')
-    style_tag.string = "[data-id='4b5f6632'], [data-id='a458ff5'], [data-id='2e5adb0'], header, footer, .intercom-lightweight-app, .header-cap {display: none !important;}"
+    style_tag.string = "[data-id='5ac1770'], [data-id='a458ff5'], [data-id='2e5adb0'], header, footer, .intercom-lightweight-app, .header-cap {display: none !important;}"
     head_tag.append(style_tag)
     return str(soup)
 # Create your views here.
@@ -42,9 +44,28 @@ def modifiy_content(content,request):
 @csrf_exempt
 @login_required
 def reverse_proxy(request,cookie_id):
+    user = request.user
+    # Lấy gói hiện tại của người dùng
+    package_token = PackageToken.objects.filter(user=user, is_active=True).first()
     
-    cookie =  get_object_or_404(AccountCookie, id=cookie_id)
-    base_url = "https://rankerfox.com/my-account/"
+    if not package_token:
+        return redirect('/')
+
+    account_group = package_token.account_group
+
+    # Kiểm tra cookie_id có thuộc nhóm tài khoản của gói hiện tại không
+    cookie = AccountCookie.objects.filter(
+        id=cookie_id,
+        account__accounts__in=[account_group]
+    ).first()
+    
+    
+    
+    if not cookie:
+        return redirect('/')
+    
+    base_url = cookie.account.platform.url
+    
     query_params = request.GET.urlencode()  # chuyển các tham số GET thành chuỗi query
     if query_params:
         target_url = f"{target_url}?{query_params}"

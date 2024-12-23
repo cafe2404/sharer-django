@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/',include('coupons.urls')),
     path('api/', include('issues.urls')),
     path('rf/', include('rankerfox.urls')),
+    path('spy/', include('spy.urls')),
 ]# Phục vụ static và media files trong môi trường phát triển
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

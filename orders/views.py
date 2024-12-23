@@ -39,7 +39,7 @@ def order(request, order_id):
                     'message': duration_response["message"],
                     'price': parse_currency(order.amount),
                     'qr_code': create_qr_code(bank_info, order.amount, order.order_id),
-                    'duration': duration_response["duration"]
+                    'duration': duration_response['duration']
                 })
             return JsonResponse({"success": False, "message": duration_response["message"]})
         return JsonResponse({"success": False, "message": "Invalid request."})
@@ -82,7 +82,7 @@ def order(request, order_id):
 
 @verification_required
 @login_required
-def payment_success(request):
-    return render(request, 'pages/payment_success.html')
+def register_subscription_success_view(request):
+    return render(request, 'pages/register_subscription_success.html')
 
 

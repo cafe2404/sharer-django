@@ -11,7 +11,7 @@ class AccountCookieSerializer(serializers.ModelSerializer):
 class PlatformSerializer(serializers.ModelSerializer):
     class Meta:
         model = Platform
-        fields = ['id', 'name', 'description', 'url', 'logo_url']
+        fields = ['id', 'name', 'description','login_choice', 'url', 'logo_url']
         read_only_fields = ['id']
 
 

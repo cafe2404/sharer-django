@@ -28,7 +28,7 @@
     <div class="mt-2 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4" id="platform-list">
         {% for account in account_group.accounts %}
         <div class="relative w-full bg-white border border-zinc-300 rounded-xl platform-item p-2 overflow-hidden" x-data="{show:false}">
-            {% if account.platform.name|lower == 'adspower' %}
+            {% if account.platform.login_choice|lower == 'ads power' %}
                 <button @click="show=!show" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
                     <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
                     <svg x-show="show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -48,7 +48,7 @@
                         <p class="text-sm text-zinc-800 font-semibold col-span-4 line-clamp-1" id="twoFactorCode-{{ account.id }}" ></p>
                     </div>
                 </div>
-            {% elif account.platform.name|lower == 'rankerfox' %}
+            {% elif account.platform.login_choice|lower == 'rankerfox' %}
                 <button @click="show=!show" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
                     <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
                     <svg x-show="show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
@@ -64,9 +64,22 @@
                         {% endfor %}
                     </div>
                 </div>
-                <!-- <a href="/rf/" target="_blank" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                </a> -->
+            {% elif account.platform.login_choice|lower == 'spy' %}
+                <button @click="show=!show" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
+                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <div x-cloak class="bg-white inset-0 absolute z-30 px-4 py-2" x-show="show">
+                    <p class="text-lg font-semibold block">Đăng nhập {{account.platform.name}}</p>
+                    <div class="grid grid-cols-4 gap-2 mt-2">
+                        {% for cookie in account.cookies %}
+                            <a target="_blank" href="{% url 'reverse_proxy_spy' cookie_id=cookie.id %}" class="flex gap-2 items-center text-zinc-900 font-medium rounded-full text-sm px-3 py-1 border border-zinc-300 hover:bg-zinc-100 justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                Sv {{ forloop.counter }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
             {% else %}
                 <button onclick="alert('Vui lòng tải xuống extension để sử dụng tài khoản')" href="{{account.platform.url}}" target="_blank" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
                     <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-puzzle"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1" /></svg>
@@ -78,12 +91,11 @@
                 </div>
                 <div class="py-2 relative" >
                     <div>
-                        <p class="text-lg font-semibold block platform-name">{{ account.platform.name }}</p>
-                        <p class="text-sm text-zinc-500 line-clamp-2">{{ account.platform.description | safe}}</p>
+                        <p class="text-lg font-semibold block platform-name">{{ account.platform.name }} </p>
+                        <p class="text-sm text-zinc-500 line-clamp-2">{{ account.platform.description}}</p>
                     </div>
                 </div>
             </div>
-
         </div>
         {% endfor %}
     </div>

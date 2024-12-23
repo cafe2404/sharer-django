@@ -31,7 +31,7 @@
     <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0" id="subscriptions">
         {% for subscription in subscriptions %}
             {% if not subscription.is_trial %}
-                <div data-id="{{ subscription.id }}"  class="relative w-full flex flex-col max-w-lg p-6 mx-auto justify-between text-zinc-900 bg-white rounded-xl shadow {{ subscription.recommended|yesno:'border-2 border-blue-600, border border-zinc-200' }}">
+                <div data-id="{{ subscription.id }}"  class="subscriptions-card relative w-full flex flex-col max-w-lg p-6 mx-auto justify-between text-zinc-900 bg-white rounded-xl shadow {{ subscription.recommended|yesno:'border-2 border-blue-600, border border-zinc-200' }}">
                     {% if subscription.recommended %}   
                         <div class="absolute bg-blue-600 text-sm py-1 px-4 rounded-full -top-4 right-4 flex items-center justify-center text-white font-semibold">
                             Best value
@@ -62,14 +62,28 @@
                         </div>
                         <!-- Platforms -->
                         <div class="mb-8 mt-2 text-left">
+                            {{ subscription.featrures | safe}}
+                            {% if subscription.platforms.all.count >= 7 %}
                             {% with  subscription.platforms.all|slice:'0, 7' as sliced_platforms %}
                                 {% for platform in sliced_platforms %}
-                                    <div class="flex items-center gap-1 p-2 hover:bg-blue-50 rounded-full">
-                                        <img src="{{ platform.logo_url }}" class="w-6 h-6 rounded-full" alt="">
-                                        <span>{{ platform.name }}</span>
-                                    </div>
+                                <div class="flex text-md items-center gap-1 p-2 hover:bg-blue-50 rounded-full">
+                                    <img src="{{ platform.logo_url }}" class="w-6 h-6 rounded-full" alt="">
+                                    <span>{{ platform.name }}</span>
+                                </div>
                                 {% endfor %}
+                                <div class="flex text-md items-center gap-1 p-2 hover:bg-blue-50 rounded-full">
+                                    <span>+{{ subscription.platforms.all.count|subtract:7}} Nền tảng khác...</span>
+                                </div>
                             {% endwith %}
+                            {% else %}
+                            {% for platform in subscription.platforms.all %}
+                                <div class="flex text-md items-center gap-1 p-2 hover:bg-blue-50 rounded-full">
+                                    <img src="{{ platform.logo_url }}" class="w-6 h-6 rounded-full" alt="">
+                                    <span>{{ platform.name }}</span>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                            
                         </div>
                     </div>
                     <div class="mt-4">
@@ -115,14 +129,14 @@
 <script>
     function subscriptionData() {
         return {
-            selectedDuration: '1', // Giá trị mặc định: 1 tháng
+            selectedDuration: '{{ subscription_tab_filters.0.duration }}', // Giá trị mặc định: 1 tháng
             handleSubscription(subscriptionId, duration) {
                 if (!duration) {
                     alert('Vui lòng chọn thời hạn gói.');
                     return;
                 }
                 console.log(subscriptionId, duration);
-                fetch('/api/orders/create/', {
+                fetch('{% url "create_order" %}', {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",

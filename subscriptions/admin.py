@@ -10,6 +10,7 @@ from platforms.models import Account,AccountGroup
 
 from unfold.contrib.import_export.forms import ExportForm, ImportForm
 from import_export.admin import ImportExportModelAdmin
+from unfold.contrib.forms.widgets import WysiwygWidget
 
 
 
@@ -61,7 +62,11 @@ class SubscriptionPlanAdmin(ModelAdmin,ImportExportModelAdmin):
     filter_horizontal = ('platforms',)
     import_form_class = ImportForm
     export_form_class = ExportForm
-    
+    formfield_overrides = {
+        models.TextField: {
+            "widget": WysiwygWidget,
+        },
+    }
     
 @admin.register(SubscriptionPlanDuration)
 class SubscriptionPlanDurationAdmin(ModelAdmin,ImportExportModelAdmin):

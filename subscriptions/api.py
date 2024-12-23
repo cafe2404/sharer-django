@@ -44,9 +44,9 @@ class SubscriptionAPIView(APIView):
                     # 3. Tính số ngày tương ứng trong gói mới
                     new_price_per_day = order.subscription_duration.price / order.subscription_duration.duration
                     additional_days = int(remaining_value / new_price_per_day)
-                    expires_at = now() + relativedelta(months=order.subscription_duration.duration) + relativedelta(days=additional_days)
+                    expires_at = now() + relativedelta(days=order.subscription_duration.duration) + relativedelta(days=additional_days)
                 else:
-                    expires_at = now() + relativedelta(months=order.subscription_duration.duration)
+                    expires_at = now() + relativedelta(days=order.subscription_duration.duration)
                 new_account_group = AccountGroup.find_available_group(order.subscription_duration)
                 if not new_account_group:
                     return Response({"error": "Không tìm thấy gói đăng ký hợp lệ."}, status=status.HTTP_400_BAD_REQUEST)
@@ -100,3 +100,46 @@ class SubscriptionAPIView(APIView):
                     token.save()
         except Exception as e:
             logger.error(f"Lỗi khi đánh dấu mã giảm giá đã sử dụng: {str(e)}")
+            
+            
+            
+class TrialSubscriptionAPIView(APIView):
+    """
+    API để đăng ký gói dùng thử (trial).
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+
+        # Kiểm tra nếu người dùng đã sử dụng trial
+        if user.has_used_trial:
+            return Response({"error": "Bạn đã sử dụng gói dùng thử trước đó."}, status=400)
+
+        # Kiểm tra nếu người dùng đã có token đang hoạt động
+        existing_token = PackageToken.objects.filter(user=user, is_active=True).first()
+        if existing_token:
+            return Response({"error": "Bạn đã có gói đăng ký hiện tại."}, status=400)
+
+        # Tìm nhóm tài khoản trial
+        trial_group = AccountGroup.objects.filter(subscription_duration__subscription_plan__is_trial=True).first()
+        if not trial_group:
+            return Response({"error": "Không tìm thấy gói dùng thử nào."}, status=400)
+
+        # Tạo token trial
+        trial_token = PackageToken.objects.create(
+            user=user,
+            account_group=trial_group,
+            expires_at=now() + relativedelta(days=trial_group.subscription_duration.duration),
+            is_active=True
+        )
+
+        # Đánh dấu người dùng đã sử dụng trial
+        user.has_used_trial = True
+        user.save()
+
+        return Response({
+            "message": "Đăng ký gói dùng thử thành công.",
+            "token": trial_token.token,
+            "expires_at": trial_token.expires_at
+        }, status=201)

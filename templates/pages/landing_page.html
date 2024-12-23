@@ -1,17 +1,16 @@
-{% extends "_base.html" %}
+{% extends "root_content.html" %}
 {% load static %}
-{% block content %}
+{% block root_content %}
 <!-- component -->
 <header class="fixed w-full z-50">
     <nav class="bg-white border-zinc-200 py-2.5 dark:bg-zinc-900">
         <div
             class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto">
             <a href="#" class="flex items-center">
-                <img src="{% static 'images/logo-full.svg' %}"
-                    class="h-6 mr-3 sm:h-9" alt="Sharer Logo" />
+                <img src="{% static 'images/logo-full.svg' %}" class="h-6 mr-3 sm:h-9" alt="Sharer Logo" />
             </a>
             <div class="flex items-center lg:order-2 gap-2">
-                <a href="https://github.com/cafe2404/sharer-extension/releases/download/v0.0.2/sharer-v0.0.2.zip"
+                <a href="{{landing.extension_url}}"
                     class="flex items-center gap-2 border border-zinc-300 text-zinc-900 bg-white hover:bg-zinc-100 focus:ring-4 focus:ring-zinc-200 font-medium rounded-full text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0">
                     <svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-cloud-download"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4" /><path d="M12 13l0 9" /><path d="M9 19l3 3l3 -3" /></svg>
                     Tải xuống extension
@@ -713,9 +712,7 @@
                     class="mb-6 font-light text-zinc-500 dark:text-zinc-400 md:text-lg">Try
                     Landwind Platform for 30 days. No
                     credit card required.</p>
-                <a href="#"
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Free
-                    trial for 30 days</a>
+                <button id="trial-subscription-btn" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Đăng ký gói dùng thử</button>
             </div>
         </div>
     </section>
@@ -759,6 +756,36 @@
     </footer>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="https://unpkg.com/flowbite@1.4.1/dist/flowbite.js"></script>
+    <script>
+        const trialButton = document.getElementById("trial-subscription-btn");
 
+        if (trialButton) {
+            trialButton.addEventListener("click", async () => {
+                try {
+    
+                    // Gọi API đăng ký gói trial
+                    const response = await fetch("{% url 'trial_subscription' %}", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": '{{csrf_token}}',
+                        },
+                    });
+                    const data = await response.json();
+    
+                    if (response.ok) {
+                        // Đăng ký thành công
+                        window.location.href = '{% url "register_subscription_success" %}';
+                    } else {
+                        // Xử lý lỗi
+                        alert(data.error || "Đăng ký gói dùng thử thất bại.");
+                    }
+                } catch (error) {
+                    console.error("Lỗi:", error);
+                    alert("Đã xảy ra lỗi khi đăng ký gói dùng thử.");
+                }
+            });
+        }
+    </script>
 
-{% endblock content %}
+{% endblock root_content %}

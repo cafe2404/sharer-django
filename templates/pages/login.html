@@ -1,6 +1,6 @@
-{% extends "_base.html" %} {% load static %}
+{% extends "root_content.html" %} {% load static %}
 {% block title %}Đăng nhập - Sharer{% endblock %}
- {% block content %}
+ {% block root_content %}
 <div class="w-full h-full flex justify-center items-center relative">
   <a href='/' class="absolute top-12 left-12">
     <img src="{% static 'images/logo-full.svg' %}" alt="Logo" class="w-64" />
@@ -28,21 +28,21 @@
             >
           </div>
           <div class="relative mb-5" x-data="{ show: false,value: '' }">
-            <input
-              :type="show ? 'text' : 'password'"
-              id="password"
-              class="block pl-2.5 pr-16 pb-2.5 pt-5 w-full text-sm text-zinc-900 bg-transparent rounded-xl border border-zinc-300 appearance-none dark:text-white focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              x-model="value"
-              name="password"
-            />
-            <label
-              for="password"
-              class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-              >Mật khẩu</label
-            >
-            <div x-show='value' class="absolute font-semibold text-sm top-1/2 -translate-y-1/2 right-3 cursor-pointer hover:text-zinc-500" @click="show = !show" x-text="show ? 'Ẩn' : 'Hiển thị'">
-              
+            <div class="relative">
+              <input
+                :type="show ? 'text' : 'password'"
+                id="password"
+                class="block pl-2.5 pr-16 pb-2.5 pt-5 w-full text-sm text-zinc-900 bg-transparent rounded-xl border border-zinc-300 appearance-none dark:text-white focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+                x-model="value"
+                name="password"
+              />
+              <div x-show='value' x-cloak class="mt-1 absolute font-semibold text-sm top-1/2 -translate-y-1/2 right-3 cursor-pointer hover:text-zinc-500" @click="show = !show" x-text="show ? 'Ẩn' : 'Hiển thị'"></div>
+              <label
+                for="password"
+                class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+                >Mật khẩu</label
+              >
             </div>
             {% if messages %}
             <div class="mt-1 text-xs text-red-500 text-left">
@@ -75,4 +75,11 @@
       </div>
   </div>
 </div>
-{% endblock content %}
+<script>
+      window.addEventListener('load', () => {
+          window.postMessage({ 
+              type: 'LOGOUT_EXTENSION',
+          }, window.location.href);
+      });
+  </script>
+{% endblock root_content %}

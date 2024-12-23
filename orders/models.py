@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.crypto import get_random_string
 from coupons.models import Coupon
+from decimal import Decimal
+
 def generate_payment_code(length=12):
     return get_random_string(length=length)
 # Create your models here.
@@ -43,16 +45,39 @@ class Order(models.Model):
     def calculate_amount(self):
         """
         Hàm tính toán giá trị đơn hàng dựa trên SubscriptionPlanDuration và các mã giảm giá.
+        Ưu tiên giảm giá theo tiền, nếu không có thì giảm theo phần trăm.
         """
         if not self.subscription_duration:
-            return 0  # Không có kế hoạch, giá trị mặc định là 0
+            return Decimal(0)  # Không có kế hoạch, giá trị mặc định là 0
+
         # Giá gốc từ SubscriptionPlanDuration
-        base_amount = self.subscription_duration.price
+        base_amount = Decimal(self.subscription_duration.price)  # Đảm bảo giá trị là Decimal
+
         if not self.pk or not self.coupons.exists():
-            return base_amount
-        # Tính tổng giảm giá từ các mã giảm giá liên kết
-        total_discount = sum(coupon.discount_amount for coupon in self.coupons.all() if coupon.discount_amount)
-        return max(base_amount - total_discount, 0)
+            return base_amount  # Không có mã giảm giá, trả giá gốc
+
+        total_discount_amount = Decimal(0)  # Tổng số tiền giảm
+        total_discount_percent = Decimal(0)  # Tổng phần trăm giảm
+
+        # Duyệt qua từng coupon để tính tổng giảm giá theo số tiền và phần trăm
+        for coupon in self.coupons.all():
+            if coupon.discount_amount:
+                total_discount_amount += coupon.discount_amount or Decimal(0)  # Cộng số tiền giảm
+            elif coupon.discount_percent:
+                total_discount_percent += coupon.discount_percent or Decimal(0)  # Cộng phần trăm giảm
+
+        # Áp dụng giảm giá theo phần trăm trước
+        if total_discount_percent > 0:
+            discount_from_percentage = base_amount * (total_discount_percent / Decimal(100))
+            base_amount -= discount_from_percentage
+
+        # Áp dụng giảm giá theo số tiền
+        if total_discount_amount > 0:
+            base_amount -= total_discount_amount
+
+        # Đảm bảo giá trị không âm
+        return max(base_amount, Decimal(0))
+        
     def save(self, *args, **kwargs):
         """
         Ghi đè phương thức save để tự động tính toán giá trị đơn hàng.

@@ -15,9 +15,13 @@ class Coupon(models.Model):
     discount_amount = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Giảm giá (số tiền)"
     )
+    discount_percent = models.PositiveIntegerField(
+        blank=True, null=True, verbose_name="Giảm giá (phần trăm)"
+    )
     additional_days = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Ngày cộng thêm"
     )
+    
     usage_limit = models.PositiveIntegerField(default=1, verbose_name="Số lần sử dụng tối đa")
     times_used = models.PositiveIntegerField(default=0, verbose_name="Số lần sử dụng")
     expiration_date = models.DateTimeField(verbose_name="Ngày hết hạn")

@@ -1,6 +1,6 @@
-{% extends "_base.html" %} {% load static %} 
+{% extends "root_content.html" %} {% load static %} 
 {% block title %}Sharer{% endblock %}
-{% block content %}
+{% block root_content %}
 <div class="flex flex-col h-full">
     {% include "partials/navbar.html" %}
     <div class="flex h-full overflow-hidden">
@@ -166,4 +166,4 @@
       };
     }
 </script>
-{% endblock content %}
+{% endblock root_content %}

@@ -40,3 +40,10 @@ def slice(value, arg):
         return value
     start, end = map(int, arg.split(','))
     return value[start:end]
+
+@register.filter
+def subtract(value, arg):
+    try:
+        return int(value) - int(arg)
+    except (ValueError, TypeError):
+        return value  # Trả về giá trị ban đầu nếu có lỗi
