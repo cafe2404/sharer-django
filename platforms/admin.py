@@ -44,15 +44,15 @@ class AccountGroupAdmin(ModelAdmin,ImportExportModelAdmin):
 class PlatformAccountAdmin(ModelAdmin,ImportExportModelAdmin): 
     inlines = [AccountCookieInline,]
     autocomplete_fields = ['rented_by']
-    list_display = [
+    list_display = (
+        # "platform__name",
         "name",
-        "platform__name",
         "rented_by",
         "username",
         "is_active",
         "total_users",
         "days_remaining"
-    ]
+    )
     fieldsets = (
         (
             None,
