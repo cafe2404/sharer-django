@@ -26,7 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=^v2tvlr5fkidj%u1=c&=1ch4%7v19x)n5m9ychszs=q5+-vj-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+PRODUCTION_ENABLED = True
 
 CORS_ALLOW_ALL_ORIGINS = True 
 ALLOWED_HOSTS = ['*']
@@ -157,12 +158,11 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media setting
-if DEBUG:
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
-else:
-    MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'
+if PRODUCTION_ENABLED:
     MEDIA_ROOT = '/var/www/sharer/media'
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
     
 # Cấu hình cho file tĩnh
 STATIC_URL = '/static/'  # URL truy cập các file tĩnh
