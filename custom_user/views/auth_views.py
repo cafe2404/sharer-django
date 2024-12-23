@@ -150,7 +150,10 @@ def change_email_view(request):
             if verification_code:
                 verification_code.delete()
             messages.success(request, 'Vui lòng xác thực email.')
-            return redirect('verification_email',next=request.GET.get('next') or '/')
+            url = reverse('verification_email')
+            # messages.success(request, 'Kiểm tra email của bạn để xác thực')
+            url += f'?next={request.GET.get("next") or "/"}'
+            return redirect(url)
     return render(request, 'pages/change_email.html')
 
 @login_required
