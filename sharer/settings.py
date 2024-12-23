@@ -158,7 +158,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media setting
 if DEBUG:
-    MEDIA_URL = 'media/'
+    MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
     MEDIA_URL = '/media/'
@@ -166,11 +166,9 @@ else:
     
 # Cấu hình cho file tĩnh
 STATIC_URL = '/static/'  # URL truy cập các file tĩnh
-
 STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Thư mục chứa các file tĩnh trong mã nguồn
 ]
-
 STATIC_ROOT = '/var/www/sharer/static'  # Thư mục chứa các file tĩnh đã thu thập trong môi trường sản phẩm
 
 
