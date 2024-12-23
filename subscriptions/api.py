@@ -2,14 +2,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .models import Package, PackageToken
+from .models import PackageToken
 from django.utils.timezone import  now
 from dateutil.relativedelta import relativedelta
 from coupons.models import UserCoupon
 from orders.models import Order
 import logging
 from typing import Optional
-
+from platforms.models import AccountGroup
 logger = logging.getLogger(__name__)
 
 class SubscriptionAPIView(APIView):
@@ -27,18 +27,30 @@ class SubscriptionAPIView(APIView):
             order = Order.objects.get(order_id=order_id, user=user)
         except Order.DoesNotExist:
             return Response({"error": "Order không tồn tại hoặc không thuộc về bạn."}, status=status.HTTP_404_NOT_FOUND)
-
         if not order.subscription_plan or not order.subscription_duration:
             return Response({"error": "Đơn hàng không có gói đăng ký hợp lệ."}, status=status.HTTP_400_BAD_REQUEST)
-
         # Kiểm tra xem người dùng đã có token chưa
         existing_token = PackageToken.objects.filter(user=user, is_active=True).first()
-
         if existing_token:
             # Nếu người dùng đã có token, tiến hành nâng cấp
             try:
-                expires_at = now() + relativedelta(months=order.subscription_duration.duration)
-                existing_token.package = Package.find_available_package(order.subscription_duration)
+                remaining_days = (existing_token.expires_at - now()).days
+                if remaining_days > 0:
+                    # 2. Tính giá trị còn lại của gói cũ
+                    old_duration = existing_token.account_group.subscription_duration.duration
+                    old_price = existing_token.account_group.subscription_duration.price
+                    remaining_value = (old_price / old_duration) * remaining_days
+
+                    # 3. Tính số ngày tương ứng trong gói mới
+                    new_price_per_day = order.subscription_duration.price / order.subscription_duration.duration
+                    additional_days = int(remaining_value / new_price_per_day)
+                    expires_at = now() + relativedelta(months=order.subscription_duration.duration) + relativedelta(days=additional_days)
+                else:
+                    expires_at = now() + relativedelta(months=order.subscription_duration.duration)
+                new_account_group = AccountGroup.find_available_group(order.subscription_duration)
+                if not new_account_group:
+                    return Response({"error": "Không tìm thấy gói đăng ký hợp lệ."}, status=status.HTTP_400_BAD_REQUEST)
+                existing_token.account_group = AccountGroup.find_available_group(order.subscription_duration)
                 existing_token.expires_at = expires_at
                 existing_token.save()
                 message = "Token đã được nâng cấp thành công."
@@ -63,7 +75,7 @@ class SubscriptionAPIView(APIView):
             "status": "success",
             "token": token.token,
             "expires_at": token.expires_at,
-            "package": token.package.name,
+            "account_group": token.account_group.name,
             "is_upgraded": bool(existing_token),
         }
         return Response(response_data, status=status.HTTP_200_OK)
@@ -80,7 +92,6 @@ class SubscriptionAPIView(APIView):
                 if user_coupon:
                     user_coupon.is_used = True
                     user_coupon.save()
-
                 # Tăng số lần sử dụng mã
                 coupon.times_used += 1
                 coupon.save()

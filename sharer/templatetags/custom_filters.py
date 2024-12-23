@@ -22,3 +22,21 @@ def parse_currency(value):
         return f"{formatted_value} ₫"
     except Exception as e:
         return f"Error: {str(e)}"
+
+@register.filter
+def obscure_email(value):
+    if '@' in value:
+        local, domain = value.split('@')
+        if len(local) > 2:
+            local = local[0] + '*' * (len(local) - 2) + local[-1]
+        domain_parts = domain.split('.')
+        domain_parts[0] = '*' * len(domain_parts[0])
+        return f"{local}@{'.'.join(domain_parts)}"
+    return value
+
+@register.filter
+def slice(value, arg):
+    if not value:
+        return value
+    start, end = map(int, arg.split(','))
+    return value[start:end]

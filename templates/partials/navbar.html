@@ -9,19 +9,16 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-cloud-download"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M19 18a3.5 3.5 0 0 0 0 -7h-1a5 4.5 0 0 0 -11 -2a4.6 4.4 0 0 0 -2.1 8.4"></path><path d="M12 13l0 9"></path><path d="M9 19l3 3l3 -3"></path></svg>
           Tải xuống extension
       </a>
-       {% if request.user.is_authenticated and request.user.avatar %}
-      <img
-        class="w-10 h-10 rounded-full"
-        src="{{ request.user.avatar.url }}"
-        alt="User Avatar"
-      />
-      {% else %}
-      <img
-        class="w-10 h-10 rounded-full"
-        src="/static/default-avatar.jpg"
-        alt="Default Avatar"
-      />
-      {% endif %}
+      <div target="_blank" class="relative p-1 rounded-full flex bg-zinc-100 hover:bg-zinc-200 items-center pl-4 gap-2">
+        <p class="text-zinc-800 font-semibold">{{request.user.username}}</p>
+        <div class="relative w-8 h-8 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-600">
+          {% if request.user.avatar %}
+            <img class="w-full h-full object-cover border" src="{{request.user.avatar.url}}" alt="">
+          {% else %}
+              <img class="w-full h-full object-cover border" src="https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png" alt="">
+          {% endif %}
+        </div>                 
+      </div>
     </div>
   </div>
 </nav>

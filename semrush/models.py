@@ -19,7 +19,7 @@ class Platform(models.Model):
         DROPSHIP = 'Dropship'
         AUTO_DS = 'Auto DS'
         
-    name = models.CharField(max_length=100, choices=NameChoice.choices,default=NameChoice.SEMRUSH)
+    name = models.CharField(max_length=100)
     description = models.TextField()
     url = models.URLField()
     logo_url = models.URLField()

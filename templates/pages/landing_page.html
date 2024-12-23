@@ -17,11 +17,15 @@
                     Tải xuống extension
                 </a>
                 {% if request.user.is_authenticated %}
-                <a href="/dashboard/" target="_blank" class="relative p-1 rounded-full flex bg-zinc-100 hover:bg-zinc-200 items-center pl-4 gap-2">
+                <a href="/dashboard/" class="relative p-1 rounded-full flex bg-zinc-100 hover:bg-zinc-200 items-center pl-4 gap-2">
                     <p class="text-zinc-800 font-semibold">{{request.user.username}}</p>
                     <div class="relative w-8 h-8 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-600">
-                        <img class="w-full h-full object-cover" src="{{request.user.avatar.url}}" alt="">
-                    </div>                 
+                        {% if request.user.avatar %}
+                            <img class="w-full h-full object-cover border" src="{{request.user.avatar.url}}" alt="">
+                        {% else %}
+                            <img class="w-full h-full object-cover border" src="https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png" alt="">
+                        {% endif %}
+                    </div>                     
                 </a>
                 {% else %}
                 <a href="/signup/"
@@ -731,93 +735,24 @@
                         and <a href="#" target="_blank"
                             class="text-blue-600 hover:underline dark:text-blue-500">Sharer</a>.
                     </span>
-                    <ul class="flex justify-start items-center mt-5 space-x-5">
-                        {% for social in landing.social_links.all %}
-                        <li>
-                            <a href="{{ social.url }}" target="_blank"
-                                class="text-zinc-500 hover:text-zinc-900 dark:hover:text-white dark:text-zinc-400">
-                                <img class="w-5 h-5" alt="" src="{{ social.icon }}">
-                            </a>
-                        </li>
-                        {% endfor %}
-                    </ul>
                 </div>
-                <div class="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 w-full">
-                    <div>
-                        <h3
-                            class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">Company</h3>
-                        <ul class="text-zinc-500 dark:text-zinc-400">
-                            <li class="mb-4">
-                                <a href="#" class=" hover:underline">About</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Careers</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Brand Center</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Blog</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3
-                            class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">Help
-                            center</h3>
-                        <ul class="text-zinc-500 dark:text-zinc-400">
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Discord
-                                    Server</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Twitter</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Facebook
-                                </li>
-                                <li class="mb-4">
-                                    <a href="#" class="hover:underline">Contact
-                                        Us</a>
-                                </li>
+                {% if footer.count >= 4 %}
+                    <div class="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-4 w-full">
+                {% else %}
+                    <div class="grid grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-{{footer.count}} w-full">
+                {% endif %}
+                    {% for footer in footers %}
+                        <div>
+                            <h3 class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">{{footer.title}}</h3>
+                            <ul class="text-zinc-500 dark:text-zinc-400">
+                                {% for link in footer.links.all %}
+                                    <li class="mb-4">
+                                        <a href="{{link.url}}" class=" hover:underline">{{link.title}}</a>
+                                    </li>
+                                {% endfor %}
                             </ul>
-                    </div>
-                    <div>
-                        <h3
-                            class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">Legal</h3>
-                        <ul class="text-zinc-500 dark:text-zinc-400">
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Privacy
-                                    Policy</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#"
-                                    class="hover:underline">Licensing</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Terms</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3
-                            class="mb-6 text-sm font-semibold text-zinc-900 uppercase dark:text-white">Company</h3>
-                        <ul class="text-zinc-500 dark:text-zinc-400">
-                            <li class="mb-4">
-                                <a href="#" class=" hover:underline">About</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Careers</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Brand
-                                    Center</a>
-                            </li>
-                            <li class="mb-4">
-                                <a href="#" class="hover:underline">Blog</a>
-                            </li>
-                        </ul>
-                    </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>

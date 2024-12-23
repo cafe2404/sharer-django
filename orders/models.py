@@ -20,7 +20,7 @@ class Order(models.Model):
     order_id = models.CharField(
         max_length=64, unique=True, default=generate_payment_code, verbose_name="Mã đơn hàng"
     )
-    coupons = models.ManyToManyField(Coupon, blank=True,null=True, related_name='orders', verbose_name="Mã giảm giá")
+    coupons = models.ManyToManyField(Coupon, blank=True, related_name='orders', verbose_name="Mã giảm giá")
     amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True, verbose_name="Giá trị đơn hàng")
     transfer_amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True,null=True, verbose_name="Tiền nhận được")
     status = models.CharField(
@@ -29,7 +29,7 @@ class Order(models.Model):
     subscription_duration = models.ForeignKey(
         'subscriptions.SubscriptionPlanDuration', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Gói đăng ký"
     )
-    is_used = models.BooleanField(default=False)
+    is_used = models.BooleanField(default=False,verbose_name='Đã sử dụng')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Ngày tạo")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Ngày cập nhật")
 

@@ -1,0 +1,162 @@
+{% extends "_base.html" %} {% load static %} {% load custom_filters %}
+{% block title %}Xác thực - Sharer{% endblock %}
+{% block content %}
+<div class="w-full h-full flex justify-center items-center relative">
+  <a href='/' class="absolute top-12 left-12">
+    <img src="{% static 'images/logo-full.svg' %}" alt="Logo" class="w-64" />
+  </a>
+  <div class="absolute bottom-0 left-0">
+    <img src="{% static 'images/bg-login-wind.svg' %}" alt="Logo" />
+  </div>
+  <div class="grid grid-cols-1 gap-4">
+      <div class="h-auto bg-white rounded-2xl border border-zinc-300 p-12 text-center overflow-hidden relative">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold mb-1">Xác thực Email</h1>
+            <p class="text-[14px] text-zinc-500">Nhập mã gồm 6 chữ số đã được gửi đến <span>{{request.user.email | obscure_email }}</span></p>
+        </header>
+        <form method="post" action="" class='min-w-80' autocomplete="off">
+          {% csrf_token %}
+          <div class="flex items-center gap-2 w-full justify-between">
+            <input type="text" name="code" id="code" hidden>
+
+            <input
+                type="text"
+                class="otp-input w-14 h-14 text-center text-2xl font-extrabold text-zinc-900 bg-zinc-100 border border-transparent hover:border-zinc-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                pattern="\d*" maxlength="1" required/>
+            <input
+                type="text"
+                class="otp-input w-14 h-14 text-center text-2xl font-extrabold text-zinc-900 bg-zinc-100 border border-transparent hover:border-zinc-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                pattern="\d*" maxlength="1" required />
+            <input
+                type="text"
+                class="otp-input w-14 h-14 text-center text-2xl font-extrabold text-zinc-900 bg-zinc-100 border border-transparent hover:border-zinc-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                pattern="\d*" maxlength="1" required />
+            <input
+                type="text"
+                class="otp-input w-14 h-14 text-center text-2xl font-extrabold text-zinc-900 bg-zinc-100 border border-transparent hover:border-zinc-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                pattern="\d*" maxlength="1" required />
+            <input
+                type="text"
+                class="otp-input w-14 h-14 text-center text-2xl font-extrabold text-zinc-900 bg-zinc-100 border border-transparent hover:border-zinc-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                pattern="\d*" maxlength="1" required />
+            <input
+                type="text"
+                class="otp-input w-14 h-14 text-center text-2xl font-extrabold text-zinc-900 bg-zinc-100 border border-transparent hover:border-zinc-200 appearance-none rounded p-4 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
+                pattern="\d*" maxlength="1" required />
+            </div>
+            {% if messages %}
+            <div class="mt-1 text-xs text-red-500 text-left">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <button
+            type="submit"
+            class="w-full mt-4 px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 font-semibold text-sm"
+          >
+            Xác thực
+          </button>
+        </form>
+        <div class="mt-4 text-sm text-zinc-500 flex items-center justify-center w-full">
+          <div>
+                Tôi không nhận được mã? 
+                <button id="refresh-code-btn" class=" text-blue-600 hover:underline inline group [&.loading]:text-blue-300 [&.loading]:cursor-not-allowed [&.loading]:pointer-events-none">
+                    <span class="group-[&.loading]:hidden">Gửi mã mới</span>
+                    <span  class="group-[&.loading]:block hidden">
+                        Đang gửi mã...
+                    </span>
+                </button>
+          </div>
+        </div>
+      </div>
+      <a href="/logout/" class="mx-auto text-sm text-zinc-500 hover:text-blue-600">Đăng xuất</a>
+  </div>
+</div>
+<script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log(document.getElementById("code"))
+        const inputs = document.querySelectorAll(".otp-input");
+        const pasteEventHandler = (event) => {
+            const pastedData = event.clipboardData.getData("text");
+            if (/^\d{6}$/.test(pastedData)) {
+                for (let i = 0; i < inputs.length; i++) {
+                    if (pastedData[i]) {
+                        inputs[i].value = pastedData[i];
+                    }
+                }
+                inputs[inputs.length - 1].focus();
+            }
+            event.preventDefault();
+        };
+    
+        // Focus to the next input field on input
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", (event) => {
+                const value = event.target.value;
+                if (/^\d$/.test(value)) {
+                    if (index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                } else {
+                    event.target.value = ""; // Clear invalid input
+                }
+            });
+    
+            // Focus to the previous input field on backspace
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Backspace" && !input.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+    
+            // Add paste event listener to the first input field
+            if (index === 0) {
+                input.addEventListener("paste", pasteEventHandler);
+            }
+        });
+
+     
+        const form = document.querySelector("form");
+        form.addEventListener("submit", (event) => {
+            event.preventDefault(); // Ngăn gửi form để kiểm tra logic
+            let otpCode = "";
+            inputs.forEach((input) => {
+                otpCode += input.value; 
+            });
+            console.log("Merged OTP Code:", otpCode);
+            document.getElementById("code").value = otpCode;
+            form.submit();
+        });
+    });
+  </script>
+
+  <script>
+    document.getElementById('refresh-code-btn').addEventListener('click', function() {
+        this.classList.add('loading');
+        fetch("{% url 'refresh_verification_code' %}", {
+            method: "GET",
+            headers: {
+                'X-CSRFToken': "{{ csrf_token }}",
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+                this.classList.remove('loading');
+            }
+            this.classList.remove('loading');
+            throw new Error('Có lỗi xảy ra');
+        })
+        .then(data => {
+            alert(data.message);
+            this.classList.remove('loading');
+        })
+        .catch(error => {
+            alert('Không thể làm mới mã xác thực. Vui lòng thử lại.');
+            this.innerHTML = "Gửi mã mới";
+        });
+    });
+</script>
+{% endblock content %}

@@ -1,13 +1,23 @@
 from django.db import models
-from custom_user.models import CustomUser as User
 from django.utils.timezone import now
-from datetime import timedelta
+from datetime import timedelta,datetime
+
 
 # Create your models here.
 class Platform(models.Model):
-
+    class LoginChoice(models.TextChoices):
+        cookie = 'cookie', 'Cookie'
+        rankerfox = 'rankerfox', 'Rankerfox'
+        adspower = 'adspower', 'Ads Power'
     name = models.CharField(max_length=100)
     description = models.TextField()
+    login_choice = models.CharField(
+        max_length=255, 
+        choices=LoginChoice.choices, 
+        default=LoginChoice.cookie,
+        null=True,blank=True,
+        verbose_name='Phương thức đăng nhập'
+    )
     url = models.URLField()
     logo_url = models.URLField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -19,11 +29,14 @@ class Platform(models.Model):
 class Account(models.Model):
     platform = models.ForeignKey(Platform, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    is_active = models.BooleanField(default=True)  # Trạng thái của tài khoản
-    rented_by = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="rented_accounts")
-    rented_at = models.DateTimeField(null=True, blank=True)  # Thời điểm bắt đầu thuê
-    expires_at = models.DateTimeField(null=True, blank=True)  # Thời điểm hết hạn thuê
-    package = models.ForeignKey('subscriptions.Package', on_delete=models.CASCADE, related_name="accounts",null=True,blank=True)  # Chỉnh sửa mối quan hệ ForeignKey
+    username = models.CharField(max_length=255,null=True,blank=True)
+    password = models.CharField(max_length=255,null=True,blank=True)
+    two_factor_auth = models.CharField(max_length=255,null=True,blank=True)
+    expiry_date = models.PositiveIntegerField(null=True, blank=True,verbose_name="Hạn sử dụng tài khoản (admin) (ngày)")
+    rented_by = models.ForeignKey('custom_user.CustomUser', null=True, blank=True, on_delete=models.SET_NULL, related_name="rented_accounts",verbose_name="Người mua")
+    rented_at = models.DateTimeField(null=True, blank=True, verbose_name='Thời gian mua (user)')  # Thời điểm bắt đầu thuê
+    expires_at = models.DateTimeField(null=True, blank=True,verbose_name='Thời gian hết hạn (user)')  # Thời điểm hết hạn thuê
+    is_active = models.BooleanField(default=True, verbose_name='Hoạt động')  # Trạng thái của tài khoản
     def __str__(self):
         return f"{self.platform.name} - {self.name}"
     class Meta:
@@ -46,7 +59,8 @@ class Account(models.Model):
             self.expires_at = None
             self.is_active = True  
             self.save()
-   
+ # Nếu đã hết hạn hoặc không có ngày hết hạn 
+    
 class AccountCookie(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     cookie = models.TextField()
@@ -56,3 +70,32 @@ class AccountCookie(models.Model):
     class Meta:
         verbose_name = 'Cookie'
         verbose_name_plural = 'Cookie'
+# Gói đăng ký bán cho người dùng (Package)
+class AccountGroup(models.Model):
+    name = models.CharField(max_length=255,blank=True,null=True)
+    subscription_duration = models.ForeignKey(
+        'subscriptions.SubscriptionPlanDuration', on_delete=models.SET_NULL, related_name='account_groups',null=True
+    )
+    max_users = models.PositiveIntegerField(default=10)  # Giới hạn số người dùng
+    buyers = models.ManyToManyField('custom_user.CustomUser', related_name='bought_packages',blank=True)
+    accounts = models.ManyToManyField(Account, related_name='accounts', blank=True, verbose_name="Tài khoản trong nhóm")
+    class Meta:
+        verbose_name = "Nhóm tài khoản"
+        verbose_name_plural = "Nhóm tài khoản"
+        ordering = ['-id']
+    def __str__(self):
+        return f"{self.name}-{self.subscription_duration.subscription_plan.name}"
+
+    def is_full(self):
+        """Kiểm tra gói đã đầy người dùng chưa"""
+        return self.buyers.count() >= self.max_users
+    @staticmethod
+    def find_available_group(subscription_plan_duration):
+        """Tìm một gói trống dựa trên thời hạn"""
+        return AccountGroup.objects.filter(
+                subscription_duration=subscription_plan_duration
+            ).annotate(
+                buyers_count=models.Count('buyers')
+            ).filter(
+                buyers_count__lt=models.F('max_users')
+            ).first()

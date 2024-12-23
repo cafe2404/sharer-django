@@ -2,21 +2,15 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from custom_user.models import CustomUser as User , UserToken
+from custom_user.models import CustomUser as User 
 from django.utils.translation import gettext_lazy as _
-from unfold.admin import ModelAdmin, StackedInline
+from unfold.admin import ModelAdmin
 from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
 from unfold.decorators import  display
 
-class UserTokenInline(StackedInline):
-    model = UserToken
-    can_delete = False
-    verbose_name_plural = 'token'
-    fk_name = 'user'
 
 @admin.register(User)
 class CustomAdminClass(BaseUserAdmin,ModelAdmin): 
-    inlines = (UserTokenInline,) 
     list_display = [
         "display_header",
         "is_active",
@@ -28,7 +22,7 @@ class CustomAdminClass(BaseUserAdmin,ModelAdmin):
         (
             _("Thông tin cá nhân"),
             {
-                "fields": (("first_name", "last_name"), "email", "avatar"),
+                "fields": (("first_name", "last_name"),( "email","phone_number"), "avatar"),
                 "classes": ["tab"],
             },
         ),
@@ -60,7 +54,7 @@ class CustomAdminClass(BaseUserAdmin,ModelAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm
-
+    list_filter = ("is_staff",)
     @display(description=_("User"))
     def display_header(self, instance: User):
         return instance.username

@@ -308,7 +308,6 @@
             `;
             // Thêm coupon mới vào danh sách
             couponList.insertAdjacentHTML('beforeend', newCouponHTML);
-
         }
         function removeCouponElm(couponCode) {
             const couponItem = document.querySelector(`[data-code="${couponCode}"]`);
@@ -341,6 +340,7 @@
                     document.getElementById('price-text').textContent = data.price;
                     renderCoupon(coupon_code);
                     document.getElementById('coupon-message').classList.add('hidden');
+                    document.getElementById('qr_code').src = data.qr_code;
                 } else {
                     document.getElementById('coupon-message').textContent = data.message;
                     document.getElementById('coupon-message').classList.remove('hidden');

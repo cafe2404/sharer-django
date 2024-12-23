@@ -13,18 +13,18 @@
         </div>
     </div>
     <div class="relative" x-data="issueReportPopup()">
-        <button @click="isOpen = true" class="fixed bottom-4 right-4 px-4 py-2 font-semibold bg-blue-600 text-white duration-150 hover:bg-blue-700 flex items-center justify-center gap-2 rounded-full">
+        <button @click="isOpen = true" class="fixed bottom-4 right-16 px-4 mr-2 py-3 font-semibold bg-blue-600 text-white duration-150 hover:bg-blue-700 flex items-center justify-center gap-2 rounded-full">
             <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-help"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 17l0 .01" /><path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" /></svg>
             <p>Báo cáo vấn đề</p>
         </button>
-
         <!-- Popup Modal -->
         <div 
             x-show="isOpen" 
             @click.outside="isOpen = false" 
-            class="fixed inset-0 bg-black/80 flex items-center justify-center z-50" 
+            class="fixed inset-0 flex items-center justify-center z-50" 
             x-cloak
             >
+            <div class="bg-black/80 absolute inset-0" @click="isOpen = false"></div>
             <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 relative z-10">
             <!-- Header -->
             <div class="flex justify-between items-center mb-2">
@@ -36,10 +36,10 @@
                 />
                 Báo cáo vấn đề
                 </h2>
-                <button @click="isOpen = false" class="text-gray-500 hover:text-gray-700 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <button @click="isOpen = false" class="absolute bg-white p-2 border shadow rounded-full -top-4 -right-4 text-gray-500 hover:text-gray-700 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
             </div>
 
@@ -60,7 +60,7 @@
                         rows="4"
                     ></textarea>
                     <template x-if="errors.description">
-                        <p class="text-red-500 text-sm mt-1" x-text="errors.description"></p>
+                        <p class="text-red-500 text-sm" x-text="errors.description"></p>
                     </template>
                 </div>
                 <!-- Image Upload -->
@@ -98,7 +98,7 @@
     function issueReportPopup() {
       return {
         isOpen: false,
-        formData: { description: "", email: "" },
+        formData: { description: "", image: null },
         errors: {},
         uploadedImage: null,
         validateForm() {
@@ -111,6 +111,7 @@
         handleImageUpload(event) {
           const file = event.target.files[0];
           if (file) {
+            this.formData.image = file; // Lưu file vào formData
             const reader = new FileReader();
             reader.onload = (e) => {
               this.uploadedImage = e.target.result;
@@ -118,16 +119,51 @@
             reader.readAsDataURL(file);
           }
         },
-        handleSubmit() {
-          if (this.validateForm()) {
-            console.log("Form submitted:", this.formData);
-            console.log("Uploaded image data:", this.uploadedImage);
-            this.isOpen = false;
-            this.formData = { description: "", email: "" };
-            this.uploadedImage = null;
+        async handleSubmit() {
+          if (!this.validateForm()) {
+            return;
           }
-        }
+
+          const formData = new FormData(); // Sử dụng FormData để gửi file và dữ liệu text
+          formData.append("content", this.formData.description);
+          if (this.formData.image) {
+            formData.append("image", this.formData.image);
+          }
+
+          try {
+            const response = await fetch("/api/issues/", {
+              method: "POST",
+              headers: {
+                "X-CSRFToken": this.getCSRFToken(), // Nếu bạn sử dụng CSRF token
+              },
+              body: formData,
+            });
+
+            if (response.ok) {
+              const data = await response.json();
+              console.log("Issue created successfully:", data);
+              this.isOpen = false;
+              this.formData = { description: "", image: null };
+              this.uploadedImage = null;
+            } else {
+              const errorData = await response.json();
+              console.error("Failed to create issue:", errorData);
+              this.errors = errorData;
+            }
+          } catch (error) {
+            console.error("Error submitting form:", error);
+          }
+        },
+        getCSRFToken() {
+          const name = "csrftoken";
+          const cookies = document.cookie.split("; ");
+          for (const cookie of cookies) {
+            const [key, value] = cookie.split("=");
+            if (key === name) return value;
+          }
+          return null;
+        },
       };
     }
-  </script>
+</script>
 {% endblock content %}

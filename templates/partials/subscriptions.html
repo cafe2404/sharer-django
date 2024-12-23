@@ -1,182 +1,150 @@
-{% load custom_filters %}
-<div class="flex items-center gap-1 p-1 mb-6 rounded-full justify-center bg-zinc-100 border w-fit mx-auto">
-    <div>
-        <input checked type="radio" name="subscription" value="1" id="duration1" class="hidden peer/duration1">
-        <label for="duration1" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration1:bg-blue-600 peer-checked/duration1:text-white">
-            1 tháng
-        </label>
-        </div>
-    
-        <!-- 3 tháng -->
-        <div>
-        <input type="radio" name="subscription" value="3" id="duration3" class="hidden peer/duration3">
-        <label for="duration3" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration3:bg-blue-600 peer-checked/duration3:text-white">
-            3 tháng
-        </label>
-        </div>
-    
-        <!-- 6 tháng -->
-        <div>
-        <input type="radio" name="subscription" value="6" id="duration6" class="hidden peer/duration6">
-        <label for="duration6" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration6:bg-blue-600 peer-checked/duration6:text-white">
-            6 tháng
-        </label>
-        </div>
-    
-        <!-- 12 tháng -->
-        <div>
-        <input type="radio" name="subscription" value="12" id="duration12" class="hidden peer/duration12">
-        <label for="duration12" class="flex items-center justify-center px-4 py-2 font-medium rounded-full text-zinc-600 bg-transparent peer-checked/duration12:bg-blue-600 peer-checked/duration12:text-white">
-            12 tháng
-        </label>
-        </div>
-</div>
-<div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0" id="subscriptions">
-    {% for subscription in subscriptions %}
-        {% if subscription.level == 2 %}
-        <div data-id="{{subscription.id}}" class="w-full subscription-item flex flex-col max-w-lg p-6 mx-auto justify-between text-zinc-900 bg-blue-50 border border-blue-600 rounded-lg shadow">
-        {% else %}
-        <div data-id="{{subscription.id}}" class="w-full flex flex-col max-w-lg p-6 mx-auto justify-between text-zinc-900 bg-white border border-zinc-300 rounded-lg shadow">
-        {% endif %}
-        <div>
-            <div class="px-2">
-                <div class="flex items-center gap-2">
-                    <h3 class="mb-2 text-2xl font-semibold">{{subscription.name}}</h3>
+{% load custom_filters %} {% load static %}
+<div x-data="subscriptionData()" >
+    <div class="flex items-center mb-12 justify-center w-full">
+        <div class="flex items-center justify-center rounded-full bg-blue-50 p-1.5">
+            {% for tab in subscription_tab_filters %}
+                <div>
+                    <input 
+                        type="radio" 
+                        name="subscription" 
+                        value="{{ tab.duration }}" 
+                        id="duration{{ tab.duration }}" 
+                        class="hidden peer"
+                        x-model="selectedDuration"
+                    />
+                    <label for="duration{{ tab.duration }}" 
+                        class="text-zinc-600 peer-checked:bg-blue-600 peer-checked:text-white rounded-full -mb-0.5 flex items-center justify-center px-4 py-2 font-medium bg-transparent ">
+                        {% if tab.name %}
+                            {{ tab.name }}
+                        {% else %}
+                            {{ tab }}
+                        {% endif %}
+                        {% if tab.is_hot %}
+                            <img src="https://img.icons8.com/?size=48&id=18515&format=png" class="w-6 ml-2" alt="Hot">
+                        {% endif %}
+                    </label>
                 </div>
-                <!-- <p class="font-light text-zinc-500 dark:text-zinc-400 text-sm mb-2">
-                    {{subscription.description}}
-                </p> -->
-                {% for duration in subscription.durations.all %}
-                <div class="flex items-center duration-price" data-duration="{{duration.duration}}" style="display: none;">
-                    <span class="mr-2 text-2xl font-extrabold">{{duration.price | parse_currency}}</span>
-                    <span class="text-zinc-500 dark:text-zinc-400">/{{duration.duration}} tháng</span>
-                    {% if duration.discount_percentage %}
-                        <span class=" p-1 rounded-lg bg-red-500 ml-2 text-sm text-white font-semibold">-{{duration.discount_percentage}}</span>
-                    {% endif %}
-                </div>
-                {% endfor %}
-            </div>
-            <div class="mb-8 mt-2 text-left">
-                {% for platform in subscription.platforms.all %}
-                    <div class="flex items-center relative gap-1 p-2 hover:bg-blue-50 duration-150 rounded-full">
-                        <div class="w-6 h-6 overflow-hidden rounded-full">
-                            <img src="{{platform.logo_url}}" alt="" class="w-full h-full object-cover" />
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Danh sách gói -->
+    <div class="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0" id="subscriptions">
+        {% for subscription in subscriptions %}
+            {% if not subscription.is_trial %}
+                <div data-id="{{ subscription.id }}"  class="relative w-full flex flex-col max-w-lg p-6 mx-auto justify-between text-zinc-900 bg-white rounded-xl shadow {{ subscription.recommended|yesno:'border-2 border-blue-600, border border-zinc-200' }}">
+                    {% if subscription.recommended %}   
+                        <div class="absolute bg-blue-600 text-sm py-1 px-4 rounded-full -top-4 right-4 flex items-center justify-center text-white font-semibold">
+                            Best value
                         </div>
-                        <span> {{platform.name}} </span>
-                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-green-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-check"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                    {% endif %}
+                    <div>
+                        <div class="px-2">
+                            <h3 class="mb-2 text-2xl font-semibold text-zinc-900 relative">{{ subscription.name }}</h3>
+                            <!-- Hiển thị giá theo thời hạn -->
+                            {% for duration in subscription.durations.all %}
+                                <div 
+                                    class="flex flex-col duration-price"
+                                    x-show="selectedDuration == '{{ duration.duration }}'"
+                                    x-cloak
+                                >
+                                    <div class="flex items-center">
+                                        <p class="text-zinc-500 line line-through">{{ duration.pre_price | parse_currency }}</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <p class="mr-2 text-2xl font-extrabold">{{ duration.price | parse_currency }}</p>
+                                        <span class="text-zinc-600">/{{ duration.duration }} tháng</span>
+                                        {% if duration.discount_percentage %}
+                                            <span class="p-1 rounded-lg bg-red-500 ml-2 text-sm text-white font-semibold">-{{ duration.discount_percentage }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <!-- Platforms -->
+                        <div class="mb-8 mt-2 text-left">
+                            {% with  subscription.platforms.all|slice:'0, 7' as sliced_platforms %}
+                                {% for platform in sliced_platforms %}
+                                    <div class="flex items-center gap-1 p-2 hover:bg-blue-50 rounded-full">
+                                        <img src="{{ platform.logo_url }}" class="w-6 h-6 rounded-full" alt="">
+                                        <span>{{ platform.name }}</span>
+                                    </div>
+                                {% endfor %}
+                            {% endwith %}
                         </div>
                     </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% if current_subscription == subscription %}
-            <button class="text-zinc-500 border border-transparent bg-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                Gói đang sử dụng
-            </button>
-        {% else %}
-            {% if subscription.level == 2 %}
-                <button class="subscribe-btn text-white border border-transparent bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                    Đăng ký ngay
-                </button>
-            {% else %}
-                <button class="subscribe-btn text-zinc-900 border border-blue-600 hover:bg-blue-50 focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                    Đăng ký ngay
-                </button>
+                    <div class="mt-4">
+                        {% if request.user.is_authenticated %}
+                            {% for duration in subscription.durations.all %}
+                                {% if duration.subscription_plan == subscription %}
+                                    {% if current_subscription_duration == duration %}
+                                        <button x-cloak x-show="selectedDuration == '{{ duration.duration }}'" class="text-zinc-500 w-full border border-transparent bg-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                            Gói hiện tại
+                                        </button>
+                                    {% elif current_subscription_duration.subscription_plan.level > subscription.level %}
+                                        <button x-cloak x-show="selectedDuration == '{{ duration.duration }}'" class="text-zinc-500 w-full border border-transparent bg-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                            Không khả dụng
+                                        </button>
+                                    {% elif current_subscription_duration.subscription_plan == duration.subscription_plan and current_subscription_duration.duration > duration.duration %}
+                                        <button x-cloak x-show="selectedDuration == '{{ duration.duration }}'" class="text-zinc-500 w-full border border-transparent bg-zinc-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                            Không khả dụng
+                                        </button>
+                                    {% else %}
+                                        <button @click="handleSubscription('{{subscription.id}}','{{duration.id}}')" x-cloak x-show="selectedDuration == '{{ duration.duration }}'" class="subscribe-btn w-full {{ subscription.recommended|yesno:'text-white bg-blue-600 hover:bg-blue-700, bg-blue-50 hover:bg-blue-100 text-blue-600' }} border border-transparent focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                            {% if current_subscription_duration.subscription_plan == subscription %}
+                                                Nâng cấp gói
+                                            {% else %}
+                                                Đăng ký ngay
+                                            {% endif %}
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                        <a href="/signup/" class="subscribe-btn w-full flex items-center justify-center {{ subscription.recommended|yesno:'text-white bg-blue-600 hover:bg-blue-700, bg-blue-50 hover:bg-blue-100 text-blue-600' }} border border-transparent focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                            Đăng ký ngay
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
             {% endif %}
-        {% endif %}
+        {% endfor %}
     </div>
-    {% endfor %}
-    <script>
-        // Hiển thị giá theo thời hạn được chọn
-        function showPriceForDuration(duration) {
-            document.querySelectorAll('.duration-price').forEach(el => {
-                if(el.dataset.duration === duration) {
-                    el.style.display = 'flex';
-                } else {
-                    el.style.display = 'none';
+</div>
+
+<!-- Alpine.js Logic -->
+<script>
+    function subscriptionData() {
+        return {
+            selectedDuration: '1', // Giá trị mặc định: 1 tháng
+            handleSubscription(subscriptionId, duration) {
+                if (!duration) {
+                    alert('Vui lòng chọn thời hạn gói.');
+                    return;
                 }
-            });
-        }
-        // Lắng nghe sự kiện thay đổi radio button
-        document.querySelectorAll('input[name="subscription"]').forEach(radio => {
-            radio.addEventListener('change', (e) => {
-                showPriceForDuration(e.target.value);
-            });
-        });
-        // Hiển thị giá mặc định cho duration 1 tháng
-        showPriceForDuration('1');
-    </script>
-    {% if request.user.is_authenticated %}
-        <script>
-            document.addEventListener("DOMContentLoaded", () => {
-                // Lấy tất cả các nút "subscribe-btn"
-                const subscribeButtons = document.querySelectorAll(".subscribe-btn");
-
-                // Hàm xử lý đăng ký hoặc nâng cấp
-                const handleSubscription = async (subscriptionPlanId, durationId) => {
-                    const csrftoken = getCSRFToken();
-                    try {
-                        const response = await fetch('/api/orders/create/', {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRFToken": csrftoken,
-                            },
-                            body: JSON.stringify({ 
-                                subscription_plan_id: subscriptionPlanId,
-                                subscription_plan_duration_id: durationId
-                            }),
-                        });
-                        const data = await response.json();
-                        if (response.ok) {
-                            window.location.href = `/orders/${data.order_id}/`;
-                        } else {
-                            // Thất bại
-                            console.error('Không thể đăng ký gói');
-                        }
-                    } catch (error) {
-                        console.error("Error:", error);
+                console.log(subscriptionId, duration);
+                fetch('/api/orders/create/', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": '{{ csrf_token }}',
+                    },
+                    
+                    body: JSON.stringify({ 
+                        subscription_plan_id: subscriptionId,
+                        subscription_plan_duration_id: duration
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.order_id) {
+                        window.location.href = `/orders/${data.order_id}/`;
+                    } else {
+                        alert('Đã có lỗi xảy ra khi đăng ký.');
                     }
-                };
-
-                // Hàm lấy CSRF token từ cookie
-                const getCSRFToken = () => {
-                    const name = "csrftoken";
-                    const cookies = document.cookie.split("; ");
-                    for (const cookie of cookies) {
-                        const [key, value] = cookie.split("=");
-                        if (key === name) return value;
-                    }
-                    return null;
-                };
-
-                // Hàm lấy duration id từ radio button được chọn
-                const getSelectedDurationId = (subscriptionPlanId) => {
-                    const selectedDuration = document.querySelector(`input[name="duration_${subscriptionPlanId}"]:checked`);
-                    return selectedDuration ? selectedDuration.value : null;
-                };
-            
-                // Thêm sự kiện click vào các nút
-                subscribeButtons.forEach((button) => {
-                    button.addEventListener("click", () => {
-                        const subscriptionPlanId = button.closest("[data-id]").dataset.id;
-                        const durationId = getSelectedDurationId();
-                        handleSubscription(subscriptionPlanId, durationId);
-                    });
-                });
-            });
-            
-        </script>
-    {% else %}
-        <script>
-            const subscribeButtons = document.querySelectorAll(".subscribe-btn");
-            subscribeButtons.forEach((button) => {
-                button.addEventListener("click", () => {
-                    window.location.href = "/login/";
-                });
-            });
-        </script>
-    {% endif %}
-</div>
-</div>
+                })
+                .catch(err => console.error(err));
+            }
+        };
+    }
+</script>
+<script src="//unpkg.com/alpinejs" defer></script>

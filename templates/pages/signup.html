@@ -9,78 +9,96 @@
     <img src="{% static 'images/bg-login-wind.svg' %}" alt="Logo" />
   </div>
   <div class="grid grid-cols-1 gap-4">
-      <div class="h-auto bg-white rounded-2xl border border-zinc-300 p-12 text-center overflow-hidden">
+      <div class="h-auto bg-white rounded-2xl border border-zinc-300 p-12 text-center overflow-hidden z-50 relative">
         <h1 class="text-4xl font-semibold mb-12">Đăng ký</h1>
-        <form method="post" action="" class='min-w-80' autocomplete="off">
+        <form method="post" action="" class='min-w-80' autocomplete="rutjfkde">
           {% csrf_token %}
           <div class="relative mb-4">
-            <input
-              type="text"
-              id="username"
-              class="block px-2.5 pb-2.5 pt-5 w-full text-sm text-zinc-900 bg-transparent rounded-xl border border-zinc-300 appearance-none dark:text-white focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              name="username"
-            />
-            <label
-              for="username"
-              class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-              >Tên người dùng</label
-            >
-          </div>
-          <div class="relative mb-4">
-            <input
-              type="email"
-              id="email"
-              class="block px-2.5 pb-2.5 pt-5 w-full text-sm text-zinc-900 bg-transparent rounded-xl border border-zinc-300 appearance-none dark:text-white focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              name="email"
-            />
-            <label
-              for="email"
-              class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-              >Email</label
-            >
-          </div>
-          <div class="relative mb-4" x-data="{ show: false, value: '' }">
-            <input
-              :type="show ? 'text' : 'password'"
-              id="password"
-              class="block pl-2.5 pr-16 pb-2.5 pt-5 w-full text-sm text-zinc-900 bg-transparent rounded-xl border border-zinc-300 appearance-none dark:text-white focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              x-model="value"
-              name="password"
-            />
-            <label
-              for="password"
-              class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-              >Mật khẩu</label
-            >
-            <div x-show='value' class="absolute font-semibold text-sm top-1/2 -translate-y-1/2 right-3 cursor-pointer hover:text-zinc-500" @click="show = !show" x-text="show ? 'Ẩn' : 'Hiển thị'">
+            <div class="relative">
+              {{form.username}}
+              <label for="username" class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">
+                Tên người dùng
+              </label>
             </div>
-          </div>
-          <div class="relative mb-5" x-data="{ show: false, value: '' }">
-            <input
-              :type="show ? 'text' : 'password'"
-              id="confirm_password"
-              class="block pl-2.5 pr-16 pb-2.5 pt-5 w-full text-sm text-zinc-900 bg-transparent rounded-xl border border-zinc-300 appearance-none dark:text-white focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-              placeholder=" "
-              x-model="value"
-              name="confirm_password"
-            />
-            <label
-              for="confirm_password"
-              class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
-              >Xác nhận mật khẩu</label
-            >
-            <div x-show='value' class="absolute font-semibold text-sm top-1/2 -translate-y-1/2 right-3 cursor-pointer hover:text-zinc-500" @click="show = !show" x-text="show ? 'Ẩn' : 'Hiển thị'">
-            </div>
-            {% if messages %}
+            {% if form.errors.username %}
             <div class="mt-1 text-xs text-red-500 text-left">
-                {% for message in messages %}
-                <p>{{ message }}</p>
+              {% for error in form.errors.username %}
+                <p>{{ error }}</p>
                 {% endfor %}
             </div>
             {% endif %}
+          </div>
+          <div class="relative mb-4">
+            <div class="relative">
+              {{form.email}}
+              <label
+                for="email"
+                class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+                >Email</label>
+            </div>
+            {% if form.errors.email %}
+            <div class="mt-1 text-xs text-red-500 text-left">
+              {% for error in form.errors.email %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          <div class="relative mb-4">
+            <div class="relative">
+              {{form.phone_number}}
+              <label
+                for="phone_number"
+                class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+                >Số điện thoại</label
+              >
+            </div>
+            {% if form.errors.phone_number %}
+            <div class="mt-1 text-xs text-red-500 text-left">
+              {% for error in form.errors.phone_number %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          <div class="relative mb-4" x-data="{ show: false, value: '' }">
+            <div class="relative">
+              {{form.password}}
+              <label
+                for="password"
+                class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+                >Mật khẩu</label
+              >
+              <div x-show='value' class="absolute font-semibold text-sm top-1/2 -translate-y-1/2 right-3 cursor-pointer hover:text-zinc-500" @click="show = !show" x-text="show ? 'Ẩn' : 'Hiển thị'">
+              </div>
+            </div>
+            {% if form.errors.password %}
+            <div class="mt-1 text-xs text-red-500 text-left">
+              {% for error in form.errors.password %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+          <div class="relative mb-5" x-data="{ show: false, value: '' }">
+            <div class="relative">
+              {{form.confirm_password}}
+              <label
+                for="confirm_password"
+                class="absolute text-sm text-zinc-500 dark:text-zinc-400 duration-300 transform -translate-y-4 scale-75 top-5 z-10 origin-[0] dark:bg-zinc-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-5 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+                >Xác nhận mật khẩu</label
+              >
+              <div x-show='value' class="absolute font-semibold text-sm top-1/2 -translate-y-1/2 right-3 cursor-pointer hover:text-zinc-500" @click="show = !show" x-text="show ? 'Ẩn' : 'Hiển thị'">
+              </div>
+            </div>
+            {% if form.errors.confirm_password %}
+            <div class="mt-1 text-xs text-red-500 text-left">
+              {% for error in form.errors.confirm_password %}
+                <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+      
           </div>
           <button
             type="submit"

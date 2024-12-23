@@ -2,21 +2,41 @@ from django.db import models
 from django.utils.crypto import get_random_string
 from django.utils.timezone import now
 from dateutil.relativedelta import relativedelta
+from platforms.models import AccountGroup
 
 def generate_random_token(length=64):
     return get_random_string(length=length)
 # Kế hoạch đăng ký (SubscriptionPlan)
 class SubscriptionPlan(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    platforms = models.ManyToManyField('platforms.Platform', related_name='package_templates')  # Các nền tảng hỗ trợ
-    level = models.PositiveIntegerField(default=1)  # Cấp độ
+    name = models.CharField(max_length=255,verbose_name="Tên gói")
+    description = models.TextField(blank=True, null=True,verbose_name="Mô tả gói")
+    platforms = models.ManyToManyField('platforms.Platform', related_name='package_templates',verbose_name='Các nền tảng trong gói')  # Các nền tảng hỗ trợ
+    level = models.PositiveIntegerField(default=0,verbose_name='Thứ tự',null=True,blank=True) 
+    recommended = models.BooleanField(default=False,verbose_name='Đề xuất gói')
+    is_trial = models.BooleanField(default=False,verbose_name='Gói thử nghiệm')
+    
     def __str__(self):
         return self.name
     class Meta:
         ordering = ['level']
         verbose_name = "Kế hoạch"
         verbose_name_plural = "Kế hoạch"
+
+class SubscriptionDurationFilter(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Tên bộ lọc')
+    duration = models.PositiveIntegerField(verbose_name='Bộ lọc thời hạn (tháng)')
+    is_hot = models.BooleanField(default=False, verbose_name='Nổi bật') 
+    subscription_durations = models.ManyToManyField(
+        'SubscriptionPlanDuration',
+        related_name='groups',
+        blank=True,
+        verbose_name="Thời hạn gói"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Ngày tạo')
+
+    def __str__(self):
+        return f"{self.duration} tháng"
+           
 class SubscriptionPlanDuration(models.Model):
     subscription_plan = models.ForeignKey(
         SubscriptionPlan,
@@ -42,48 +62,26 @@ class SubscriptionPlanDuration(models.Model):
         ordering = ['duration']
         verbose_name = "Thời hạn gói"
         verbose_name_plural = "Thời hạn gói"
-# Gói đăng ký bán cho người dùng (Package)
-class Package(models.Model):
-    name = models.CharField(max_length=255,blank=True,null=True)
-    subscription_plan = models.ForeignKey(
-        SubscriptionPlan, on_delete=models.CASCADE, related_name='packages'
-    )
-    max_users = models.PositiveIntegerField(default=10)  # Giới hạn số người dùng
-    buyers = models.ManyToManyField('custom_user.CustomUser', related_name='bought_packages',null=True,blank=True)  # Danh sách người dùng đã mua gói
-    class Meta:
-        verbose_name = "Nhóm tài khoản"
-        verbose_name_plural = "Nhóm tài khoản"
-        ordering = ['-id']
-    def __str__(self):
-        return f"{self.name}-{self.subscription_plan.name}"
+        
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Tự động thêm gói này vào nhóm phù hợp
+        group, created = SubscriptionDurationFilter.objects.get_or_create(duration=self.duration)
+        group.subscription_durations.add(self)
 
-    def is_full(self):
-        """Kiểm tra gói đã đầy người dùng chưa"""
-        return self.buyers.count() >= self.max_users
-    @staticmethod
-    def find_available_package(subscription_plan_duration):
-        """Tìm một gói trống dựa trên thời hạn"""
-        return Package.objects.filter(
-                subscription_plan=subscription_plan_duration.subscription_plan
-            ).annotate(
-                buyers_count=models.Count('buyers')
-            ).filter(
-                buyers_count__lt=models.F('max_users')
-            ).first()
+    class Meta:
+        ordering = ['duration']
+        verbose_name = "Bộ lọc thòi hạn gói"
+        verbose_name_plural = "Bộ lọc thòi hạn gói"
+
+
 class PackageToken(models.Model):
-    package = models.ForeignKey(
-        Package, 
-        on_delete=models.CASCADE,
-        verbose_name='Nhóm tài khoản'
-    )
     token = models.CharField(
         max_length=64,
         unique=True,
         default=generate_random_token,
         verbose_name='Mã truy cập'
     )
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Ngày tạo')
-    expires_at = models.DateTimeField(verbose_name='Ngày hết hạn')
     user = models.ForeignKey(
         'custom_user.CustomUser',
         on_delete=models.CASCADE,
@@ -91,12 +89,17 @@ class PackageToken(models.Model):
         blank=True,
         verbose_name='Người dùng'
     )
+    account_group = models.ForeignKey(
+        'platforms.AccountGroup', 
+        on_delete=models.CASCADE,
+        verbose_name='Nhóm tài khoản'
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Ngày tạo')
+    expires_at = models.DateTimeField(verbose_name='Ngày hết hạn',null=True, blank=True)
     is_active = models.BooleanField(default=False, verbose_name='Kích hoạt')
-
     class Meta:
         verbose_name = "Mã đăng ký"
         verbose_name_plural = "Mã đăng ký"
-        unique_together = ('package', 'user')
 
     @classmethod
     def create_from_order(cls, order):
@@ -105,18 +108,15 @@ class PackageToken(models.Model):
         """
         if not order.subscription_plan or not order.subscription_duration:
             raise ValueError("Order must have a subscription plan and duration associated.")
-
         # Tìm gói trống phù hợp với kế hoạch đăng ký
-        new_package = Package.find_available_package(order.subscription_duration)
-        if not new_package:
+        new_account_group = AccountGroup.find_available_group(order.subscription_duration)
+        if not new_account_group:
             raise ValueError("No available package for the selected subscription plan.")
-
         # Tính ngày hết hạn dựa trên thời hạn gói
         expires_at = now() + relativedelta(months=order.subscription_duration.duration)
-
         # Tạo token mới
         return cls.objects.create(
-            package=new_package,
+            account_group=new_account_group,
             user=order.user,
             is_active=True,
             expires_at=expires_at
@@ -126,15 +126,16 @@ class PackageToken(models.Model):
         # Kiểm tra nếu có gói cũ và xóa người dùng khỏi gói cũ
         if self.user:
             previous_package_token = PackageToken.objects.filter(user=self.user, is_active=True).first()
-            if previous_package_token and previous_package_token.package != self.package:
-                previous_package_token.package.buyers.remove(self.user)
-        # Gọi hàm lưu gốc
+            if previous_package_token and previous_package_token.account_group != self.account_group:
+                previous_package_token.account_group.buyers.remove(self.user)
+                previous_package_token.is_active = False  # Vô hiệu hóa token cũ
+                previous_package_token.save()
+
         super().save(*args, **kwargs)
 
-        # Tự động thêm user vào danh sách buyers của package mới
-        if self.user and self.user not in self.package.buyers.all():
-            self.package.buyers.add(self.user)
-            self.package.save()
-
+        # Tự động thêm user vào danh sách buyers của account_group mới
+        if self.user and self.user not in self.account_group.buyers.all():
+            self.account_group.buyers.add(self.user)
+            self.account_group.save()
     def __str__(self):
-        return f"Token - {self.package.subscription_plan.name} - {self.user.username}"
+        return f"Token - {self.account_group.subscription_duration} - {self.user.username}"

@@ -6,6 +6,5 @@ from platforms.api import PlatformViewSet, AccountViewSet
 
 router = DefaultRouter()
 router.register(r'platforms', PlatformViewSet, basename='platform')
-# router.register(r'accounts', AccountViewSet, basename='account')
-
+router.register(r'accounts', AccountViewSet, basename='account')
 urlpatterns = router.urls

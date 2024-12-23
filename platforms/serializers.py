@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Platform, Account, AccountCookie
+from .models import Platform, Account, AccountCookie, AccountGroup
+from subscriptions.serializers import SubscriptionPlanDurationSerializer
 
 
 class AccountCookieSerializer(serializers.ModelSerializer):
@@ -19,5 +20,11 @@ class AccountSerializer(serializers.ModelSerializer):
     cookies = AccountCookieSerializer(source='accountcookie_set', many=True, read_only=True)  # Liên kết ngược tới AccountCookie
     class Meta:
         model = Account
-        fields = ['id', 'platform', 'name', 'is_active', 'rented_by', 'rented_at', 'expires_at', 'cookies']
+        fields = ['id', 'platform', 'name','username','password','two_factor_auth','is_active', 'rented_by', 'rented_at', 'expires_at', 'cookies']
 
+class AccountGroupSerializer(serializers.ModelSerializer):
+    accounts = AccountSerializer(many=True)
+    subscription_duration = SubscriptionPlanDurationSerializer()
+    class Meta:
+        model = AccountGroup
+        fields = ['id', 'subscription_duration', 'accounts']

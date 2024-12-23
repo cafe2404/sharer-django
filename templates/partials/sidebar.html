@@ -10,7 +10,7 @@
         class="flex items-center gap-4 py-2 px-6 relative group"
       >
         <div class="w-1 h-full bg-blue-600 py-2 left-0 top-0 absolute opacity-0 group-[&.active]:opacity-100 duration-150"></div>
-        <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="currentColor"  class="icon icon-tabler icons-tabler-filled icon-tabler-layout-dashboard"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 3a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2zm0 12a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-2a2 2 0 0 1 2 -2zm10 -4a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-6a2 2 0 0 1 2 -2zm0 -8a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-4a2 2 0 0 1 -2 -2v-2a2 2 0 0 1 2 -2z" /></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
         Trang chủ
       </a>
     </li>
@@ -58,11 +58,22 @@
         Cài đặt tài khoản
       </a>
     </li>
+    <li>
+      <a
+        href="{{landing.document_url}}"
+        target="_blank"
+        class="flex items-center gap-4 py-2 px-6 relative group hover:bg-zinc-100 text-zinc-600"
+      >
+        <div class="w-1 h-full bg-blue-600 py-2 left-0 top-0 absolute opacity-0 group-[&.active]:opacity-100 duration-150"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scroll-text"><path d="M15 12h-5"/><path d="M15 8h-5"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M8 21h12a2 2 0 0 0 2-2v-1a1 1 0 0 0-1-1H11a1 1 0 0 0-1 1v1a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v2a1 1 0 0 0 1 1h3"/></svg>
+        Hướng dẫn sử dụng
+      </a>
+    </li>
     <div class="w-full mt-12 p-4">
         <div class="flex flex-col items-center justify-center p-2 w-full rounded-lg border text-center">
           <div class="flex items-center gap-2 ">
             <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
-            <p class="text-md text-zinc-800 font-semibold">{{current_subscription.name}}</p>
+            <p class="text-md text-zinc-800 font-semibold">{{current_subscription_duration.subscription_plan.name}}</p>
           </div>
           <p class="text-sm text-zinc-600 font-semibold mb-4">Thời hạn sử dụng đến ngày {{ current_token.expires_at|date:"d/m/Y" }}</p>
           <button class="mb-2 text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-cyan-400 font-semibold  text-white duration-150 flex items-center justify-center gap-2 rounded-full">Nâng cấp gói</button>

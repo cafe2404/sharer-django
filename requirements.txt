@@ -1,5 +1,5 @@
 bs4
-Django
+django
 django-browser-reload
 django-compressor
 django-cors-headers
@@ -10,3 +10,9 @@ lxml
 pillow
 requests
 whitenoise
+channels
+daphne
+channels-redis
+python-dateutil
+psycopg2
+im

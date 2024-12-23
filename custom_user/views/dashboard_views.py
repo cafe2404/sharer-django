@@ -4,11 +4,16 @@ from django.contrib import messages
 from subscriptions.models import PackageToken
 from ..serializers import  AccountSerializer , UserSubscriptionSerializer
 from platforms.models import Account
-from subscriptions.serializers import PackageSerializer
+from platforms.serializers import AccountGroupSerializer
 from orders.models import Order
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from ..decorators import verification_required
 
+
+
+@login_required
+@verification_required
 def settings_view(request):
     if request.method == 'POST':
         if 'email' in request.POST:
@@ -46,36 +51,43 @@ def settings_view(request):
             user.delete()
             messages.success(request, 'Tài khoản đã được xóa')
     return render(request, 'pages/dashboard/settings.html')
+@login_required
+@verification_required
 def dashboard_view(request):
     user = request.user
 
     # Kiểm tra người dùng có gói đăng ký hay không
     package_token = PackageToken.objects.filter(user=user, is_active=True).first()
-
-    # Lấy gói đăng ký của người dùng
-    package = package_token.package
-
-    # Lấy tài khoản của người dùng (cả tài khoản thuộc gói và không thuộc gói)
-    accounts = Account.objects.filter(rented_by=user)
-
-    # Serialize thông tin người dùng, gói đăng ký và tài khoản của họ
-    user_subscription_serializer = UserSubscriptionSerializer(user)
-    package_serializer = PackageSerializer(package)
-    account_serializer = AccountSerializer(accounts, many=True)
+    if  package_token:
+        account_group = package_token.account_group
+        # Lấy tài khoản của người dùng (cả tài khoản thuộc gói và không thuộc gói)
+        accounts = Account.objects.filter(rented_by=user)
+        # Serialize thông tin người dùng, gói đăng ký và tài khoản của họ
+        user_subscription_serializer = UserSubscriptionSerializer(user).data
+        account_group_serializer = AccountGroupSerializer(account_group).data
+        account_serializer = AccountSerializer(accounts, many=True).data
+    else:
+        accounts = []
+        user_subscription_serializer = None
+        account_group_serializer = None
+        account_serializer = None
     return render(
         request, 'pages/dashboard/dashboard.html',
         {
-            'user_subscription': user_subscription_serializer.data,
-            'package': package_serializer.data,
-            'accounts': account_serializer.data,
+            'user_subscription': user_subscription_serializer,
+            'account_group': account_group_serializer,
+            'accounts': account_serializer,
         }
     )
 
+@login_required
+@verification_required
 def subscription_view(request):
     return render(request, 'pages/dashboard/subscriptions.html')
 
 
 @login_required
+@verification_required
 def transaction_history_view(request):
     # Lấy danh sách giao dịch của người dùng hiện tại
     user = request.user

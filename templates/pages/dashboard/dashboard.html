@@ -6,7 +6,7 @@
 {% block main %}
 <div class="flex items-center flex-col justify-center">
     <h1 class="text-2xl font-semibold">Chào mừng bạn đến với Sharer</h1>
-   <div class="max-w-screen-md w-full mt-6">
+    <div class="max-w-screen-md w-full mt-6">
         <div class="relative w-full">
             <span class="absolute top-0 left-1 p-3 text-zinc-600">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -18,40 +18,150 @@
                     d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" /><path
                     d="M21 21l-6 -6" /></svg>
             </span>
-            <input type="text" placeholder="Tìm kiếm" class="rounded-full text-md p-3 pl-12 w-full bg-white outline-none border border-zinc-300 focus:border-zinc-500" />
+            <input id="search-input" type="text" placeholder="Tìm kiếm" class="rounded-full text-md p-3 pl-12 w-full bg-white outline-none border border-zinc-300 focus:border-zinc-500" />
         </div>
     </div>
 </div>
-    <div class="mt-8">
-        <h4 class="text-md font-semibold text-zinc-800">{{package.subscription_plan.name}}</h4>
-        <div class="mt-2 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
-            {% for platform_account in package.accounts %}
-                <div class="w-full bg-white border border-zinc-300 rounded-xl flex relative group cursor-pointer gap-2 p-2" >
-                    <div class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
-                        <img class="w-full h-full object-cover" src="{{platform_account.platform.logo_url}}"alt >
+
+<div class="mt-8">
+    <h4 class="text-md font-semibold text-zinc-800">{{account_group.subscription_duration.subscription_plan.name}}</h4>
+    <div class="mt-2 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4" id="platform-list">
+        {% for account in account_group.accounts %}
+        <div class="relative w-full bg-white border border-zinc-300 rounded-xl platform-item p-2 overflow-hidden" x-data="{show:false}">
+            {% if account.platform.name|lower == 'adspower' %}
+                <button @click="show=!show" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
+                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <div x-cloak class="bg-white inset-0 absolute z-30 px-4 py-2" x-show="show">
+                    <p class="text-lg font-semibold block">Đăng nhập {{account.platform.name}}</p>
+                    <div class="flex items-center gap-2 w-full">
+                        <p class="text-sm text-zinc-500 line-clamp-2 col-span-2 whitespace-nowrap">Tài khoản:</p>
+                        <p class="text-sm text-zinc-800 font-semibold line-clamp-2 col-span-4">{{account.username}}</p>
                     </div>
-                    <div class="py-2">
-                        <p class="text-lg font-semibold block">{{ platform_account.platform.name }}</p>
-                        <p class="text-sm text-zinc-500 line-clamp-2">{{ platform_account.platform.description | safe}}</p>
+                    <div class="flex items-center gap-2 w-full">
+                        <p class="text-sm text-zinc-500 line-clamp-2 col-span-2 whitespace-nowrap">Mật khẩu:</p>
+                        <p class="text-sm text-zinc-800 font-semibold line-clamp-2 col-span-4">{{account.password}}</p>
                     </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-    <div class="mt-6">
-        <h4 class="text-md font-semibold text-zinc-800">Tài khoản lẻ</h4>
-        <div class="mt-2 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4">
-            {% for platform_account in accounts %}
-                <div class="w-full bg-white border border-zinc-300 rounded-xl flex relative group cursor-pointer gap-2 p-2" >
-                    <div class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
-                        <img class="w-full h-full object-cover" src="{{platform_account.platform.logo_url}}"alt >
-                    </div>
-                    <div class="py-2">
-                        <p class="text-lg font-semibold block">{{ platform_account.platform.name }}</p>
-                        <p class="text-sm text-zinc-500 line-clamp-2">{{ platform_account.platform.description | safe}}</p>
+                    <div class="flex items-center gap-2 w-full">
+                        <p class="text-sm text-zinc-500 line-clamp-2 col-span-2 whitespace-nowrap">2Fa code:</p>
+                        <p class="text-sm text-zinc-800 font-semibold col-span-4 line-clamp-1" id="twoFactorCode-{{ account.id }}" ></p>
                     </div>
                 </div>
-            {% endfor %}
+            {% elif account.platform.name|lower == 'rankerfox' %}
+                <button @click="show=!show" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
+                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+                <div x-cloak class="bg-white inset-0 absolute z-30 px-4 py-2" x-show="show">
+                    <p class="text-lg font-semibold block">Đăng nhập {{account.platform.name}}</p>
+                    <div class="grid grid-cols-4 gap-2 mt-2">
+                        {% for cookie in account.cookies %}
+                            <a target="_blank" href="{% url 'reverse_proxy_rankerfox' cookie_id=cookie.id %}" class="flex gap-2 items-center text-zinc-900 font-medium rounded-full text-sm px-3 py-1 border border-zinc-300 hover:bg-zinc-100 justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                Sv {{ forloop.counter }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- <a href="/rf/" target="_blank" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                </a> -->
+            {% else %}
+                <button onclick="alert('Vui lòng tải xuống extension để sử dụng tài khoản')" href="{{account.platform.url}}" target="_blank" class="absolute top-2 right-2 p-2 rounded-full hover:bg-zinc-100 bg-transparent text-zinc-800 z-40">
+                    <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-puzzle"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7h3a1 1 0 0 0 1 -1v-1a2 2 0 0 1 4 0v1a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 0 1 0 4h-1a1 1 0 0 0 -1 1v3a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-1a2 2 0 0 0 -4 0v1a1 1 0 0 1 -1 1h-3a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h1a2 2 0 0 0 0 -4h-1a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1" /></svg>
+                </button>
+            {% endif %}
+            <div class="flex relative group cursor-pointer gap-4">
+                <div class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
+                    <img class="w-full h-full object-cover" src="{{account.platform.logo_url}}" alt>
+                </div>
+                <div class="py-2 relative" >
+                    <div>
+                        <p class="text-lg font-semibold block platform-name">{{ account.platform.name }}</p>
+                        <p class="text-sm text-zinc-500 line-clamp-2">{{ account.platform.description | safe}}</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
+        {% endfor %}
     </div>
+</div>
+
+<div class="mt-6">
+    <h4 class="text-md font-semibold text-zinc-800">Tài khoản lẻ</h4>
+    <div class="mt-2 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-4" id="single-account-list">
+        {% for account in accounts %}
+            <div class="w-full bg-white border border-zinc-300 rounded-xl flex relative group cursor-pointer gap-2 p-2 platform-item">
+                <div class="overflow-hidden rounded-lg w-24 h-24 min-w-24 aspect-square bg-white">
+                    <img class="w-full h-full object-cover" src="{{account.platform.logo_url}}" alt>
+                </div>
+                <div class="py-2">
+                    <p class="text-lg font-semibold block platform-name">{{ account.platform.name }}</p>
+                    <p class="text-sm text-zinc-500 line-clamp-2">{{ account.platform.description | safe}}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('search-input').addEventListener('input', function() {
+        let searchTerm = this.value.toLowerCase();
+        let platformItems = document.querySelectorAll('.platform-item');
+
+        platformItems.forEach(function(item) {
+            let platformName = item.querySelector('.platform-name').textContent.toLowerCase();
+            if (platformName.includes(searchTerm)) {
+                item.style.display = '';  // Show item
+            } else {
+                item.style.display = 'none';  // Hide item
+            }
+        });
+    });
+
+    // Ví dụ: Bắt đầu làm mới mã OTP cho tài khoản có ID = 1
+    function getCSRFToken() {
+        const name = "csrftoken";
+        const cookies = document.cookie.split("; ");
+        for (const cookie of cookies) {
+            const [key, value] = cookie.split("=");
+            if (key === name) return value;
+        }
+        return null;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Hàm để lấy mã 2FA từ API
+        const fetchTwoFactorCode = async (accountId) => {
+            try {
+                const response = await fetch(`/api/accounts/${accountId}/two_factor_auth/`);
+                if (!response.ok) throw new Error("Failed to fetch 2FA code");
+                const data = await response.json();
+                return data.otp_code; // Đảm bảo API trả về đúng định dạng này
+            } catch (error) {
+                console.error("Error fetching 2FA code:", error);
+                return "Error"; // Trả về mã lỗi nếu có vấn đề
+            }
+        };
+    
+        // Hàm cập nhật mã 2FA trên giao diện
+        const updateTwoFactorCode = async (accountId) => {
+            const container = document.getElementById(`twoFactorCode-${accountId}`);
+            if (!container) return; // Nếu không tìm thấy container thì dừng
+            const newCode = await fetchTwoFactorCode(accountId);
+            container.textContent = newCode; // Cập nhật mã mới
+        };
+    
+        // Lặp qua tất cả các tài khoản và cập nhật mã
+        const accountIds = Array.from(document.querySelectorAll('[id^="twoFactorCode-"]'))
+            .map((el) => el.id.split('-')[1]); // Lấy danh sách ID tài khoản từ phần tử DOM
+    
+        accountIds.forEach((accountId) => {
+            updateTwoFactorCode(accountId); // Cập nhật ngay khi load trang
+            setInterval(() => updateTwoFactorCode(accountId), 30000); // Cập nhật mỗi 30 giây
+        });
+    });
+</script>
 {% endblock %}

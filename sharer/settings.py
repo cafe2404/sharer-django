@@ -29,19 +29,20 @@ SECRET_KEY = 'django-insecure-=^v2tvlr5fkidj%u1=c&=1ch4%7v19x)n5m9ychszs=q5+-vj-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['160.187.246.61','localhost','127.0.0.1']
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8000",'http://160.187.246.61/'] 
-
+CORS_ALLOW_ALL_ORIGINS = True 
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000","http://127.0.0.1:8000",'http://160.187.246.61/','https://fdf0-42-114-37-162.ngrok-free.app'] 
 
 # Application definition
 
 INSTALLED_APPS = [
     'daphne',
     'unfold',  # before django.contrib.admin
+    'unfold.contrib.import_export',  # optional, if django-import-export package is used
+    'import_export',
     'unfold.contrib.filters',  # optional, if special filters are needed
     'unfold.contrib.forms',  # optional, if special form elements are needed
     'unfold.contrib.inlines',  # optional, if special inlines are needed
-    'unfold.contrib.import_export',  # optional, if django-import-export package is used
     'unfold.contrib.guardian',  # optional, if django-guardian package is used
     'unfold.contrib.simple_history',  # optional, if django-simple-history package is used
     'django.contrib.admin',
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
     'orders',
     'sharer',
     'coupons',
+    'issues'
 ]
 
 MIDDLEWARE = [
@@ -73,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.locale.LocaleMiddleware"
 ]
 
 ROOT_URLCONF = 'sharer.urls'
@@ -89,6 +92,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'subscriptions.context_processors.subscriptions_context',
+                'landing.context_processors.landing_context'
             ],
         },
     },
@@ -153,13 +157,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 STATIC_URL = '/static/'  # Đường dẫn URL cho tệp tĩnh
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'staticfiles'),  # Thư mục chứa các tệp tĩnh của bạn
+    os.path.join(BASE_DIR, 'static'),  # Thư mục chứa các tệp tĩnh của bạn
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Thư mục thu thập tệp tĩnh
-
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # Thư mục thu thập tệp tĩnh
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 #Cors settings 
 CORS_ALLOW_ALL_ORIGINS = True  # Cho phép tất cả các nguồn truy cập vào API của bạn
 #custom user model
@@ -219,15 +221,15 @@ UNFOLD = {
                         'permission': lambda request: request.user.is_superuser,
                     },
                     {
-                        'title': _('Nhóm tài khoản và token'),
-                        'icon': 'inventory_2',
-                        'link': reverse_lazy('admin:subscriptions_package_changelist'),
+                        'title': _('Quản lý tài khoản'),
+                        'icon': 'language',
+                        'link': reverse_lazy('admin:platforms_platform_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
                     {
-                        'title': _('Nền tảng và tài khoản'),
-                        'icon': 'language',
-                        'link': reverse_lazy('admin:platforms_platform_changelist'),
+                        'title': _('Người dùng đăng ký'),
+                        'icon': 'groups',
+                        'link': reverse_lazy('admin:subscriptions_packagetoken_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
                     {
@@ -243,12 +245,6 @@ UNFOLD = {
                         'permission': lambda request: request.user.is_superuser,
                     },
                     {
-                        'title': _('Liên kết mạng xã hội'),
-                        'icon': 'share',
-                        'link': reverse_lazy('admin:landing_sociallink_changelist'),
-                        'permission': lambda request: request.user.is_superuser,
-                    },
-                    {
                         'title': _('Nội dung Landing Page'),
                         'icon': 'article',
                         'link': reverse_lazy('admin:landing_landingpagecontent_changelist'),
@@ -260,20 +256,52 @@ UNFOLD = {
                         'link': reverse_lazy('admin:orders_paymentsetting_changelist'),
                         'permission': lambda request: request.user.is_superuser,
                     },
+                    {
+                        'title': _('Báo cáo vấn đề'),
+                        'icon': 'credit_card',
+                        'link': reverse_lazy('admin:issues_issue_changelist'),
+                        'permission': lambda request: request.user.is_superuser,
+                    },
                 ],
             },
         ],
     },
     "TABS": [
+         {
+            "models": [
+                "landing.landingpagecontent",
+                "landing.sociallink",
+                "landing.footercolumn",
+            ],
+            "items": [
+                {
+                    "title": _("Nội dung landing page"),
+                    "link": reverse_lazy("admin:landing_landingpagecontent_changelist"),
+                },
+                {
+                    "title": _("Liên kết mạng xã hội"),
+                    "link": reverse_lazy("admin:landing_sociallink_changelist"),
+                },
+                {
+                    "title": _("Cột chân trang"),
+                    "link": reverse_lazy("admin:landing_footercolumn_changelist"),
+                },
+            ],
+        },
         {
             "models": [
                 "platforms.platform",
+                "platforms.accountgroup",
                 "platforms.account",
             ],
             "items": [
                 {
                     "title": _("Nền tảng"),
                     "link": reverse_lazy("admin:platforms_platform_changelist"),
+                },
+                {
+                    "title": _("Nhóm tài khoản"),
+                    "link": reverse_lazy("admin:platforms_accountgroup_changelist"),
                 },
                 {
                     "title": _("Tài khoản"),
@@ -283,24 +311,9 @@ UNFOLD = {
         },
         {
             "models": [
-                "subscriptions.package",
-                "subscriptions.packagetoken",
-            ],
-            "items": [
-                   {
-                    "title": _("Nhóm tài khoản"),
-                    "link": reverse_lazy("admin:subscriptions_package_changelist"),
-                },
-                {
-                    "title": _("Mã truy cập"),
-                    "link": reverse_lazy("admin:subscriptions_packagetoken_changelist"),
-                },
-            ],
-        },
-                {
-            "models": [
                 "subscriptions.subscriptionplan",
                 "subscriptions.subscriptionplanduration",
+                "subscriptions.subscriptiondurationfilter"
             ],
             "items": [
                 {
@@ -308,8 +321,12 @@ UNFOLD = {
                     "link": reverse_lazy("admin:subscriptions_subscriptionplan_changelist"),
                 },
                 {
-                    "title": _("Thời hạn"),
+                    "title": _("Chi tiết kế hoạch"),
                     "link": reverse_lazy("admin:subscriptions_subscriptionplanduration_changelist"),
+                },
+                {
+                    "title": _("Bộ lọc gói"),
+                    "link": reverse_lazy("admin:subscriptions_subscriptiondurationfilter_changelist"),
                 },
             ],
         },
@@ -324,9 +341,13 @@ UNFOLD = {
         },
     },
 }
-
+LANGUAGES = (
+    ("vi", _("Vietnamese")),
+)
 LOGIN_URL = '/login/'
+LANGUAGE_CODE = "vi"
 
+USE_I18N = True
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -365,3 +386,14 @@ CHANNEL_LAYERS = {
 
 # Custom error handlers
 handler404 = 'sharer.views.handler404'
+
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Hoặc dùng console trong quá trình phát triển
+EMAIL_HOST = 'smtp.gmail.com'  # SMTP server, ví dụ Gmail
+EMAIL_PORT = 587  # Port cho giao thức TLS
+EMAIL_USE_TLS = True  # Sử dụng TLS (True nếu dùng cổng 587)
+EMAIL_HOST_USER = 'minhphung8898@gmail.com'  # Địa chỉ email của bạn
+EMAIL_HOST_PASSWORD = 'yvexayavggqmmpiv'  # Mật khẩu ứng dụng hoặc tài khoản email
+DEFAULT_FROM_EMAIL = 'Sharer <minhphung8898@gmail.com>'  # Email người gửi
+

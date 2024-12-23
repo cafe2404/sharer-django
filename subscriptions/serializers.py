@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import SubscriptionPlan, PackageToken, Package
-from platforms.serializers import AccountSerializer
+from .models import SubscriptionPlan, PackageToken, SubscriptionPlanDuration
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +11,8 @@ class PackageTokenSerializer(serializers.ModelSerializer):
         model = PackageToken
         fields = ['id', 'token', 'created_at', 'expires_at', 'user']
 
-class PackageSerializer(serializers.ModelSerializer):
-    accounts = AccountSerializer(many=True)
+class SubscriptionPlanDurationSerializer(serializers.ModelSerializer):
     subscription_plan = SubscriptionPlanSerializer()
     class Meta:
-        model = Package
-        fields = ['id', 'subscription_plan', 'accounts']
+        model = SubscriptionPlanDuration
+        fields = '__all__'
