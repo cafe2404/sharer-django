@@ -6,6 +6,15 @@
         <p class="mb-5 text-center font-light text-zinc-500 sm:text-md dark:text-zinc-400">{{landing.subscription_title}}</p>
         {% include 'partials/subscriptions.html' %}
     </div>
+    <script>
+        function sendHeight() {
+            var height = document.body.scrollHeight;  // Lấy chiều cao của nội dung iframe
+            window.parent.postMessage(height, 'https://toolsngon.com/');  // Gửi chiều cao cho trang cha
+        }
+    
+        window.onload = sendHeight;  // Khi trang tải
+        window.onresize = sendHeight;  // Khi thay đổi kích thước
+    </script>
 </section>
 {% endblock %}
 S
