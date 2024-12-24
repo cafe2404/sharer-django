@@ -1,7 +1,7 @@
 {% load custom_filters %} {% load static %}
 <div x-data="subscriptionData()" >
     <div class="flex items-center mb-12 justify-center w-full">
-        <div class="flex items-center justify-center rounded-full bg-blue-50 p-1.5">
+        <div class="flex items-center justify-center rounded-full bg-white sm:bg-blue-50 p-1.5 flex-wrap gap-1 sm:gap-0">
             {% for tab in subscription_tab_filters %}
                 <div>
                     <input 
@@ -13,7 +13,7 @@
                         x-model="selectedDuration"
                     />
                     <label for="duration{{ tab.duration }}" 
-                        class="text-zinc-600 peer-checked:bg-blue-600 peer-checked:text-white rounded-full -mb-0.5 flex items-center justify-center px-4 py-2 font-medium bg-transparent ">
+                        class="text-center text-zinc-600 border sm:border-none peer-checked:bg-blue-600 peer-checked:text-white rounded-full -mb-0.5 flex items-center justify-center px-4 py-2 font-medium bg-transparent ">
                         {% if tab.name %}
                             {{ tab.name }}
                         {% else %}
