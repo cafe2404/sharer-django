@@ -161,7 +161,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Media setting
 MEDIA_URL = '/media/'
 if PRODUCTION_ENABLED:
-    MEDIA_ROOT = '/var/www/sharer/media'
+    MEDIA_ROOT = '/var/www/sharer/media/'
 else:
     MEDIA_ROOT = BASE_DIR / 'media'
     
@@ -170,7 +170,7 @@ STATIC_URL = '/static/'  # URL truy cập các file tĩnh
 STATICFILES_DIRS = [
     BASE_DIR / 'static',  # Thư mục chứa các file tĩnh trong mã nguồn
 ]
-STATIC_ROOT = '/var/www/sharer/static'  # Thư mục chứa các file tĩnh đã thu thập trong môi trường sản phẩm
+STATIC_ROOT = '/var/www/sharer/static/'  # Thư mục chứa các file tĩnh đã thu thập trong môi trường sản phẩm
 
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
