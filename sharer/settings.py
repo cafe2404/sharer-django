@@ -37,6 +37,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://160.187.246.61/',
     'http://160.187.246.140/',
     'https://160.187.246.140/',
+    'https://app.toolsngon.com'
 ] 
 SESSION_COOKIE_SECURE=False
 # Application definition
