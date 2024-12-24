@@ -1,13 +1,14 @@
 import os
 from django.core.asgi import get_asgi_application
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sharer.settings')
+django.setup()
+django_asgi_app = get_asgi_application()
+
+
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from orders import routing  # Đảm bảo import routing từ sharer
 import django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sharer.settings')
-django.setup()
-
-django_asgi_app = get_asgi_application()
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
