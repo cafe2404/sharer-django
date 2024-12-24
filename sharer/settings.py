@@ -34,10 +34,10 @@ ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    'http://160.187.246.61/',
     'http://160.187.246.140/',
     'https://160.187.246.140/',
-    'https://app.toolsngon.com'
+    'https://app.toolsngon.com',
+    "https://toolsngon.com/"
 ] 
 SESSION_COOKIE_SECURE=False
 # Application definition

@@ -114,9 +114,9 @@
                                 {% endif %}
                             {% endfor %}
                         {% else %}
-                        <a href="/signup/" class="subscribe-btn w-full flex items-center justify-center {{ subscription.recommended|yesno:'text-white bg-blue-600 hover:bg-blue-700, bg-blue-50 hover:bg-blue-100 text-blue-600' }} border border-transparent focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                            Đăng ký ngay
-                        </a>
+                            <a href="/signup/" target="_top" class="subscribe-btn w-full flex items-center justify-center {{ subscription.recommended|yesno:'text-white bg-blue-600 hover:bg-blue-700, bg-blue-50 hover:bg-blue-100 text-blue-600' }} border border-transparent focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                Đăng ký ngay
+                            </a>
                         {% endif %}
                     </div>
                 </div>
@@ -150,10 +150,12 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.order_id) {
-                        window.location.href = `/orders/${data.order_id}/`;
+                    if (window.self !== window.top) {
+                        // Đang được nhúng trong iframe
+                        window.open(`/orders/${data.order_id}/`, '_blank');
                     } else {
-                        alert('Đã có lỗi xảy ra khi đăng ký.');
+                        // Không được nhúng
+                        window.top.location.href = `/orders/${data.order_id}/`;
                     }
                 })
                 .catch(err => console.error(err));
