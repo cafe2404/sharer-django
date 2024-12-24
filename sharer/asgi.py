@@ -6,8 +6,11 @@ from orders import routing  # Đảm bảo import routing từ sharer
 import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sharer.settings')
 django.setup()
+
+django_asgi_app = get_asgi_application()
+
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
+    "http": django_asgi_app,
     "websocket": AuthMiddlewareStack(
         URLRouter(
             routing.websocket_urlpatterns  # Đảm bảo sử dụng URL được cấu hình trong routing.py
