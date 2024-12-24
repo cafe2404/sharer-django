@@ -8,9 +8,11 @@ from coupons.models import Coupon
 from custom_user.decorators import verification_required
 from django.contrib.auth.decorators import login_required
 from .utils import apply_coupon_to_order,create_qr_code , update_order_duration
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 @verification_required
 @login_required
+@xframe_options_exempt
 def order(request, order_id):
     order = get_object_or_404(Order, order_id=order_id, user=request.user, status='pending')
     public_coupon = Coupon.get_latest_valid_public_coupon()
@@ -82,6 +84,7 @@ def order(request, order_id):
 
 @verification_required
 @login_required
+@xframe_options_exempt
 def register_subscription_success_view(request):
     return render(request, 'pages/register_subscription_success.html')
 
