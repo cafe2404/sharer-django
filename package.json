@@ -4,7 +4,7 @@
   },
   "scripts": {
     "tailwind": "npx tailwindcss -i ./static/src/input.css -o ./static/src/output.css --watch",
-    "tailwind:build": "npx tailwindcss -i ./static/src/input.css -o ./static/src/output.css --minify"
+    "tailwind:build": "npx tailwindcss -i ./static/src/input.css -o ./static/src/style.min.css --minify"
   },
   "dependencies": {
     "plasmo": "^0.89.4"
