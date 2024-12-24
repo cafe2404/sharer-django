@@ -1,7 +1,7 @@
 # consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .models import Order
+from orders.models import Order
 from asgiref.sync import sync_to_async  # Import sync_to_async để gọi các hàm đồng bộ
 
 class PaymentStatusConsumer(AsyncWebsocketConsumer):
