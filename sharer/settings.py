@@ -173,9 +173,6 @@ STATICFILES_DIRS = [
 STATIC_ROOT = '/var/www/sharer/static'  # Thư mục chứa các file tĩnh đã thu thập trong môi trường sản phẩm
 
 
-
-
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 #Cors settings 
 CORS_ALLOW_ALL_ORIGINS = True  # Cho phép tất cả các nguồn truy cập vào API của bạn
