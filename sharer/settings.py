@@ -404,10 +404,9 @@ handler404 = 'sharer.views.handler404'
 
 # Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Hoặc dùng console trong quá trình phát triển
-EMAIL_HOST = 'smtp.gmail.com'  # SMTP server, ví dụ Gmail
+EMAIL_HOST = 'smtp.larksuite.com'  # SMTP server, ví dụ Gmail
 EMAIL_PORT = 587  # Port cho giao thức TLS
 EMAIL_USE_TLS = True  # Sử dụng TLS (True nếu dùng cổng 587)
-EMAIL_HOST_USER = 'minhphung8898@gmail.com'  # Địa chỉ email của bạn
-EMAIL_HOST_PASSWORD = 'yvexayavggqmmpiv'  # Mật khẩu ứng dụng hoặc tài khoản email
-DEFAULT_FROM_EMAIL = 'Sharer <minhphung8898@gmail.com>'  # Email người gửi
-
+EMAIL_HOST_USER = 'support@toolsngon.com'  # Địa chỉ email của bạn
+EMAIL_HOST_PASSWORD = 'ZUYFCpmM4uq2DUQz'  # Mật khẩu ứng dụng hoặc tài khoản email
+DEFAULT_FROM_EMAIL = 'Sharer <support@toolsngon.com>'  # Email người gửi
