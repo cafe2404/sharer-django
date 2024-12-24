@@ -28,6 +28,9 @@ class LandingPageContent(models.Model):
     document_url = models.URLField(blank=True, null=True, verbose_name="Đường dẫn tài liệu sử dụng")
     extension_url = models.URLField(blank=True, null=True, verbose_name="Đường dẫn tải xuống extension")
     
+    subscription_title = models.CharField(max_length=500,default='Được thiết kế cho các nhóm cũng như cá nhân', verbose_name="Tiêu đề đăng ký")
+    subscription_description = models.TextField(default='Tại Sharer, chúng tôi tập trung vào các thị trường nơi công nghệ, đổi mới và vốn có thể mở ra giá trị dài hạn và thúc đẩy tăng trưởng kinh tế.',verbose_name="Mô tả đăng ký")
+    
     is_active = models.BooleanField(default=True, verbose_name="Kích hoạt")
     class Meta:
         verbose_name = "Nội dung Landing Page"

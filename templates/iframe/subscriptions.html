@@ -2,11 +2,8 @@
 {% block body %}
 <section class="bg-white dark:bg-zinc-900">
     <div class="max-w-screen-xl px-4 py-8 mx-auto lg:py-24 lg:px-6">
-        <h2 class="mb-4 text-center text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">Được thiết kế cho các nhóm cũng như cá nhân
-        </h2>
-        <p class="mb-5 text-center font-light text-zinc-500 sm:text-md dark:text-zinc-400">
-            Tại Sharer, chúng tôi tập trung vào các thị trường nơi công nghệ, đổi mới và vốn có thể mở ra giá trị dài hạn và thúc đẩy tăng trưởng kinh tế.
-        </p>
+        <h2 class="mb-4 text-center text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white">{{landing.subscription_title}}</h2>
+        <p class="mb-5 text-center font-light text-zinc-500 sm:text-md dark:text-zinc-400">{{landing.subscription_title}}</p>
         {% include 'partials/subscriptions.html' %}
     </div>
 </section>
