@@ -62,36 +62,48 @@
     </section>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="https://unpkg.com/flowbite@1.4.1/dist/flowbite.js"></script>
-    <script>
-        const trialButton = document.getElementById("trial-subscription-btn");
 
-        if (trialButton) {
-            trialButton.addEventListener("click", async () => {
-                try {
-    
-                    // Gọi API đăng ký gói trial
-                    const response = await fetch("{% url 'trial_subscription' %}", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRFToken": '{{csrf_token}}',
-                        },
-                    });
-                    const data = await response.json();
-    
-                    if (response.ok) {
-                        // Đăng ký thành công
-                        window.location.href = '{% url "register_subscription_success" %}';
-                    } else {
-                        // Xử lý lỗi
-                        alert(data.error || "Đăng ký gói dùng thử thất bại.");
+
+
+    {% if request.user.is_authenticated %}
+        <script>
+            const trialButton = document.getElementById("trial-subscription-btn");
+
+            if (trialButton) {
+                trialButton.addEventListener("click", async () => {
+                    try {
+        
+                        // Gọi API đăng ký gói trial
+                        const response = await fetch("{% url 'trial_subscription' %}", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRFToken": '{{csrf_token}}',
+                            },
+                        });
+                        const data = await response.json();
+        
+                        if (response.ok) {
+                            // Đăng ký thành công
+                            window.location.href = '{% url "register_subscription_success" %}';
+                        } else {
+                            // Xử lý lỗi
+                            alert(data.error || "Đăng ký gói dùng thử thất bại.");
+                        }
+                    } catch (error) {
+                        console.error("Lỗi:", error);
+                        alert("Đã xảy ra lỗi khi đăng ký gói dùng thử.");
                     }
-                } catch (error) {
-                    console.error("Lỗi:", error);
-                    alert("Đã xảy ra lỗi khi đăng ký gói dùng thử.");
-                }
-            });
-        }
+                });
+            }
+        </script>
+    {% else %}
+    <script>
+
+        document.getElementById("trial-subscription-btn").addEventListener("click", async () => {
+            window.location.href = '{% url "signup" %}'
+        })
     </script>
+    {% endif %}
 
 {% endblock root_content %}
