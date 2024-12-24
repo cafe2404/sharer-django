@@ -150,13 +150,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (window.self !== window.top) {
-                        // Đang được nhúng trong iframe
-                        window.open(`/orders/${data.order_id}/`, '_blank');
-                    } else {
-                        // Không được nhúng
-                        window.top.location.href = `/orders/${data.order_id}/`;
-                    }
+                    window.top.location.href = `/orders/${data.order_id}/`;
                 })
                 .catch(err => console.error(err));
             }
