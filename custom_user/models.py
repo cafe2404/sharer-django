@@ -4,10 +4,9 @@ from django.db import models
 from django.utils.crypto import get_random_string
 import secrets
 from subscriptions.models import PackageToken
-from django.utils import timezone
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.utils.timezone import timezone,now,timedelta
+from django.utils.timezone import now,timedelta
 
 
 def generate_verification_code():
@@ -35,7 +34,7 @@ class CustomUser(AbstractUser):
         verbose_name_plural = 'Người dùng'
         ordering = ['is_staff']
 class UserSession(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sessions',verbose_name='Người dùng')
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='sessions',verbose_name='Người dùng')
     device_uuid = models.CharField(max_length=36, unique=True, null=True, blank=True,verbose_name='UUID thiết bị')
     is_active = models.BooleanField(default=False,verbose_name='Đang đăng nhập')
     last_login = models.DateTimeField(auto_now=True,verbose_name='Đăng nhập lần cuối')
@@ -73,15 +72,19 @@ class VerificationCode(models.Model):
             
 
     def send_verification_email(self):
-        html_content = render_to_string('emails/verify_code.html', {'verification_code': self})
-        email = EmailMessage(
-            subject=f'Xác thực tài khoản {self.user.username}',
-            body=html_content,
-            from_email='contact@sharer.com',
-            to=[self.user.email],  
-        )
-        email.content_subtype = "html" 
-        email.send()
+        try:
+            html_content = render_to_string('emails/verify_code.html', {'verification_code': self})
+            email = EmailMessage(
+                subject=f'Xác thực tài khoản {self.user.username}',
+                body=html_content,
+                from_email='contact@sharer.com',
+                to=[self.user.email],  
+            )
+            email.content_subtype = "html" 
+            email.send()
+        except Exception as e:
+            print(f"Error sending verification email: {e}")
+            raise
         
     @classmethod
     def create_or_reset_verification_code(cls, user):

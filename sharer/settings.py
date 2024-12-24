@@ -281,23 +281,6 @@ UNFOLD = {
         ],
     },
     "TABS": [
-        {
-            "models": [
-                "customuser.customuser",
-                "customuser.usersession",
-            ],
-            "items": [
-                {
-                    "title": _("Người dùng"),
-                    "link": reverse_lazy("admin:custom_user_customuser_changelist"),
-                },
-                {
-                    "title": _("Phiên đăng nhập"),
-                    "link": reverse_lazy("admin:custom_user_usersession_changelist"),
-                },
-     
-            ],
-        },
          {
             "models": [
                 "landing.landingpagecontent",

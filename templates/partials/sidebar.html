@@ -69,14 +69,16 @@
         Hướng dẫn sử dụng
       </a>
     </li>
-    <div class="w-full mt-12 p-4">
-        <div class="flex flex-col items-center justify-center p-2 w-full rounded-lg border text-center">
-          <div class="flex items-center gap-2 ">
-            <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
-            <p class="text-md text-zinc-800 font-semibold">{{current_subscription_duration.subscription_plan.name}}</p>
+    {% if current_subscription_duration %}
+      <div class="w-full mt-12 p-4">
+          <div class="flex flex-col items-center justify-center p-2 w-full rounded-lg border text-center">
+            <div class="flex items-center gap-2 ">
+              <span class="w-2 h-2 bg-orange-500 rounded-full"></span>
+              <p class="text-md text-zinc-800 font-semibold">{{current_subscription_duration.subscription_plan.name}}</p>
+            </div>
+            <p class="text-sm text-zinc-600 font-semibold mb-4">Thời hạn sử dụng đến ngày {{ current_token.expires_at|date:"d/m/Y" }}</p>
+            <button class="mb-2 text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-cyan-400 font-semibold  text-white duration-150 flex items-center justify-center gap-2 rounded-full">Nâng cấp gói</button>
           </div>
-          <p class="text-sm text-zinc-600 font-semibold mb-4">Thời hạn sử dụng đến ngày {{ current_token.expires_at|date:"d/m/Y" }}</p>
-          <button class="mb-2 text-sm px-4 py-2 bg-gradient-to-r from-indigo-400 to-cyan-400 font-semibold  text-white duration-150 flex items-center justify-center gap-2 rounded-full">Nâng cấp gói</button>
-        </div>
-    </div>
+      </div>
+    {% endif %}
 </div>

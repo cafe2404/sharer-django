@@ -4,13 +4,21 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from custom_user.models import CustomUser as User , UserSession
 from django.utils.translation import gettext_lazy as _
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin,StackedInline
 from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
 from unfold.decorators import  display
 
 
+class UserSessionInline(StackedInline):
+    model = UserSession
+    can_delete = False
+    verbose_name_plural = 'Phiên đăng nhập'
+    fk_name = 'user'
+
+
 @admin.register(User)
 class CustomAdminClass(BaseUserAdmin,ModelAdmin): 
+    inlines = (UserSessionInline,) 
     list_display = [
         "display_header",
         "is_active",
@@ -70,9 +78,4 @@ class CustomAdminClass(BaseUserAdmin,ModelAdmin):
         return instance.is_superuser
 
 
-@admin.register(UserSession)
-class UserSessionAdmin(ModelAdmin):
-    list_display = ['user', 'device_uuid', 'is_active', 'last_login']
-    list_filter = ['is_active']
-    search_fields = ['user__username', 'device_uuid']
-    readonly_fields = ['user', 'device_uuid', 'is_active', 'last_login']
+    
